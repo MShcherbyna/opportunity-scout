@@ -1,3 +1,4 @@
+import { reactive } from 'vue';
 import type { Post, PostStatus } from '@/types';
 
 type PostSeed = {
@@ -252,6 +253,7 @@ function buildPost(seed: PostSeed, index: number): Post {
         suggestedResponse: seed.suggestedResponse,
         foundAt: formatRelativeTime(seed.minutesAgo),
         publishedAt: foundAtDate.toISOString(),
+        manuallyMarkedRelevant: false,
     };
 }
 
@@ -287,7 +289,10 @@ function buildMockPosts(): Post[] {
     return posts;
 }
 
-export const mockPosts: Post[] = buildMockPosts();
+// Reactive so the "mark as relevant" toggle (mutated in place from wherever
+// a post is rendered) is reflected everywhere else that reads the same post
+// — this is the app's frontend-only mock state, not persisted to a backend.
+export const mockPosts: Post[] = reactive(buildMockPosts());
 
 export function findPostById(id: number): Post | undefined {
     return mockPosts.find((post) => post.id === id);

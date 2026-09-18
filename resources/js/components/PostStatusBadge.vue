@@ -14,20 +14,20 @@ const config = computed(() => {
             return {
                 label: 'Relevant',
                 icon: CheckCircle2,
-                class: 'border-transparent bg-primary/10 text-primary dark:bg-primary/15',
+                class: 'text-primary',
             };
         case 'maybe':
             return {
                 label: 'Maybe',
                 icon: CircleHelp,
-                class: 'border-transparent bg-amber-500/10 text-amber-600 dark:text-amber-400',
+                class: 'text-primary',
             };
         case 'rejected':
         default:
             return {
                 label: 'Rejected',
                 icon: XCircle,
-                class: 'border-transparent bg-muted text-muted-foreground',
+                class: 'text-muted-foreground',
             };
     }
 });
