@@ -1,6 +1,5 @@
-# threads-scraper
 
-Threads scraper app.
+## Threads scraper app.
 
 ## Running with Docker
 
