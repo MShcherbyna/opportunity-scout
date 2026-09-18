@@ -1,20 +1,18 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid } from '@lucide/vue';
+import { LayoutGrid, Rss, Settings, X } from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
-import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
-import NavUser from '@/components/NavUser.vue';
+import { Button } from '@/components/ui/button';
 import {
     Sidebar,
     SidebarContent,
-    SidebarFooter,
     SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
+    useSidebar,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import posts from '@/routes/posts';
+import { scraping } from '@/routes/settings';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -23,44 +21,48 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+    {
+        title: 'Posts',
+        href: posts.index(),
+        icon: Rss,
+    },
+    {
+        title: 'Settings',
+        href: scraping(),
+        icon: Settings,
+        activeMatch: '/settings',
+    },
 ];
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
-];
+const { toggleSidebar } = useSidebar();
 </script>
 
 <template>
-    <Sidebar collapsible="icon" variant="inset">
+    <Sidebar collapsible="offcanvas" variant="inset">
         <SidebarHeader>
-            <SidebarMenu>
-                <SidebarMenuItem>
-                    <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboard()">
-                            <AppLogo />
-                        </Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
+            <div class="flex items-center justify-between gap-2 px-2 py-1.5">
+                <Link
+                    :href="dashboard()"
+                    class="flex min-w-0 flex-1 items-center gap-2"
+                >
+                    <AppLogo />
+                </Link>
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    class="size-7 shrink-0"
+                    title="Close menu"
+                    @click="toggleSidebar"
+                >
+                    <X class="size-4" />
+                    <span class="sr-only">Close menu</span>
+                </Button>
+            </div>
         </SidebarHeader>
 
         <SidebarContent>
             <NavMain :items="mainNavItems" />
         </SidebarContent>
-
-        <SidebarFooter>
-            <NavFooter :items="footerNavItems" />
-            <NavUser />
-        </SidebarFooter>
     </Sidebar>
     <slot />
 </template>

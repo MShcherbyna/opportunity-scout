@@ -11,4 +11,6 @@ export type NavItem = {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon;
     isActive?: boolean;
+    /** URL prefix used for active-state matching instead of `href`, for nav items that map to several sibling routes. */
+    activeMatch?: string;
 };

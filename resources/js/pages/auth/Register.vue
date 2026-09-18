@@ -16,8 +16,8 @@ defineProps<{
 
 defineOptions({
     layout: {
-        title: 'Create an account',
-        description: 'Enter your details below to create your account',
+        title: 'Create your account',
+        description: 'Start monitoring Threads opportunities',
     },
 });
 </script>

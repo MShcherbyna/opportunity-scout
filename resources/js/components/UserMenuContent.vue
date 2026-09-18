@@ -7,6 +7,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import ThemeSwitcher from '@/components/ThemeSwitcher.vue';
 import UserInfo from '@/components/UserInfo.vue';
 import { logout } from '@/routes';
 import { edit } from '@/routes/profile';
@@ -30,11 +31,16 @@ defineProps<Props>();
         </div>
     </DropdownMenuLabel>
     <DropdownMenuSeparator />
+    <div class="flex items-center justify-between px-2 py-1.5">
+        <span class="text-sm">Theme</span>
+        <ThemeSwitcher />
+    </div>
+    <DropdownMenuSeparator />
     <DropdownMenuGroup>
         <DropdownMenuItem :as-child="true">
             <Link class="block w-full cursor-pointer" :href="edit()" prefetch>
                 <Settings class="mr-2 h-4 w-4" />
-                Settings
+                Account settings
             </Link>
         </DropdownMenuItem>
     </DropdownMenuGroup>

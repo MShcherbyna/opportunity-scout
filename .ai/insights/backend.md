@@ -11,9 +11,32 @@ conventions.
 
 ## What Doesn't Work
 
+### 2026-09-18
+
+Shell `export VAR=x` before `php artisan serve &` did not reliably reach the
+request-handling process in this sandboxed dev environment — the server kept
+reading the original `.env` values (mysql/database session) even though a
+foreground `php artisan tinker --execute 'echo config(...)'` in the same
+shell correctly showed the override. To point the app at a throwaway SQLite
+DB + file sessions for a local check without Docker/MySQL, back up and edit
+`.env` directly instead (it's gitignored), then restart `serve`.
+Evidence: `.env` (`DB_CONNECTION`, `SESSION_DRIVER`), `docker-compose.yml`
+(mysql-hostname-only setup)
+
 ## Codebase Patterns
 
 ## Tool & Library Notes
+
+### 2026-09-18
+
+`Route::inertia($uri, $component, $props)` (the `inertiajs/inertia-laravel`
+Router macro) only accepts a static `$props` array — it can't forward route
+parameters like `{post}` into the Inertia props. For a page that needs a URL
+param, register a plain closure route instead: `Route::get('posts/{post}',
+fn (string $post) => Inertia::render('PostDetail', ['postId' => (int)
+$post]))->name('posts.show');`.
+Evidence: `vendor/inertiajs/inertia-laravel/src/ServiceProvider.php:155`,
+`routes/web.php` (posts.show route)
 
 ## Recurring Errors & Fixes
 
@@ -22,6 +45,7 @@ conventions.
 ## Open Questions
 
 ### 2026-09-18
+
 18 of 39 tests fail, all auth/session flows: `Tests\Feature\Auth\
 AuthenticationTest`, `PasswordResetTest`, `RegistrationTest`,
 `TwoFactorChallengeTest`, `VerificationNotificationTest`, and

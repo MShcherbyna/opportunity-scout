@@ -2,7 +2,6 @@
 import { Link } from '@inertiajs/vue3';
 import {
     SidebarGroup,
-    SidebarGroupLabel,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
@@ -14,17 +13,24 @@ defineProps<{
     items: NavItem[];
 }>();
 
-const { isCurrentUrl } = useCurrentUrl();
+const { currentUrl, isCurrentOrParentUrl } = useCurrentUrl();
+
+function isActive(item: NavItem): boolean {
+    if (item.activeMatch) {
+        return currentUrl.value.startsWith(item.activeMatch);
+    }
+
+    return isCurrentOrParentUrl(item.href);
+}
 </script>
 
 <template>
     <SidebarGroup class="px-2 py-0">
-        <SidebarGroupLabel>Platform</SidebarGroupLabel>
         <SidebarMenu>
             <SidebarMenuItem v-for="item in items" :key="item.title">
                 <SidebarMenuButton
                     as-child
-                    :is-active="isCurrentUrl(item.href)"
+                    :is-active="isActive(item)"
                     :tooltip="item.title"
                 >
                     <Link :href="item.href">
