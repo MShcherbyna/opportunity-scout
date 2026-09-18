@@ -1,39 +1,45 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { AlertTriangle } from '@lucide/vue';
+import { AlertTriangle, CalendarDays, Inbox, Target } from '@lucide/vue';
 import ActivityChart from '@/components/ActivityChart.vue';
 import MetricCard from '@/components/MetricCard.vue';
-import Pagination from '@/components/Pagination.vue';
 import PostsTable from '@/components/posts/PostsTable.vue';
+import RunScraperButton from '@/components/RunScraperButton.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { useAiSettings } from '@/composables/useAiSettings';
+import type { ActivityPeriod } from '@/composables/useDashboardStats';
 import { useDashboardStats } from '@/composables/useDashboardStats';
 import { usePosts } from '@/composables/usePosts';
-import { useScrapingSettings } from '@/composables/useScrapingSettings';
-import { aiFiltering, scraping } from '@/routes/settings';
+import postsRoutes from '@/routes/posts';
+import { aiFiltering } from '@/routes/settings';
 
 defineOptions({
     layout: {
         title: 'Dashboard',
-        description: 'Threads opportunity monitoring',
+        description: 'Overview of your Threads monitoring activity',
     },
 });
 
-const { stats, activity } = useDashboardStats();
-const { settings: scrapingSettings } = useScrapingSettings();
+const { stats, period, activity } = useDashboardStats();
 const { settings: aiSettings } = useAiSettings();
 
-const checkFrequencyLabel: Record<string, string> = {
-    '5': 'Every 5 minutes',
-    '15': 'Every 15 minutes',
-    '30': 'Every 30 minutes',
-    '60': 'Every hour',
-};
+const periodOptions: { value: ActivityPeriod; label: string }[] = [
+    { value: '7', label: 'Last 7 days' },
+    { value: '30', label: 'Last 30 days' },
+];
 
-const { posts, isLoading, total, totalPages, page, perPage, setPage } =
-    usePosts({ perPage: 3, initialStatusFilter: 'relevant' });
+const { posts, isLoading } = usePosts({
+    perPage: 5,
+    initialStatusFilter: 'relevant',
+});
 </script>
 
 <template>
@@ -54,79 +60,96 @@ const { posts, isLoading, total, totalPages, page, perPage, setPage } =
             </AlertDescription>
         </Alert>
 
+        <div
+            class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"
+        >
+            <div>
+                <h1 class="text-xl font-semibold">Dashboard</h1>
+                <p class="text-muted-foreground mt-0.5 text-xs">
+                    Overview of your Threads monitoring activity
+                </p>
+            </div>
+            <div class="flex items-center gap-2">
+                <RunScraperButton />
+                <Select
+                    :model-value="period"
+                    @update:model-value="period = $event as ActivityPeriod"
+                >
+                    <SelectTrigger class="w-full sm:w-36">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem
+                            v-for="option in periodOptions"
+                            :key="option.value"
+                            :value="option.value"
+                        >
+                            {{ option.label }}
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+        </div>
+
         <div class="grid gap-4 md:grid-cols-3">
             <MetricCard
+                :icon="Inbox"
                 label="Posts collected"
                 :value="stats.postsCollected.value.toLocaleString()"
                 :change="stats.postsCollected.change"
+                positive
             />
             <MetricCard
+                :icon="Target"
                 label="Relevant posts"
                 :value="stats.relevantPosts.value.toLocaleString()"
                 :change="stats.relevantPosts.change"
             />
             <MetricCard
+                :icon="CalendarDays"
                 label="New today"
                 :value="stats.newToday.value.toLocaleString()"
                 :change="stats.newToday.change"
             />
         </div>
 
-        <div class="grid gap-4 lg:grid-cols-[1.5fr_.7fr]">
-            <div class="border-border bg-card rounded-lg border p-4">
-                <h2 class="text-sm font-semibold">Activity · last 7 days</h2>
-                <p class="text-muted-foreground text-xs">
-                    Collected vs relevant
-                </p>
-                <ActivityChart :data="activity" class="mt-2" />
-            </div>
-
-            <div class="border-border bg-card rounded-lg border p-4">
-                <h2 class="text-sm font-semibold">Current search</h2>
-                <p class="text-muted-foreground text-xs">
-                    {{ checkFrequencyLabel[scrapingSettings.checkFrequency] }}
-                </p>
-                <div class="mt-3.5 flex flex-wrap gap-1.5">
-                    <Badge
-                        v-for="keyword in scrapingSettings.keywords"
-                        :key="keyword"
-                        variant="secondary"
-                    >
-                        {{ keyword }}
-                    </Badge>
+        <div class="border-border bg-card rounded-lg border p-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-sm font-semibold">Activity overview</h2>
+                <div
+                    class="text-muted-foreground flex items-center gap-4 text-xs"
+                >
+                    <span class="flex items-center gap-1.5">
+                        <span
+                            class="bg-muted-foreground/40 size-2 rounded-sm"
+                        />
+                        Collected posts
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <span class="bg-primary/80 size-2 rounded-sm" />
+                        Relevant posts
+                    </span>
                 </div>
-                <Button as-child variant="outline" size="sm" class="mt-4">
-                    <Link :href="scraping()">Edit settings</Link>
-                </Button>
             </div>
+            <ActivityChart :data="activity" class="mt-2" />
+        </div>
+
+        <div class="flex items-center justify-between">
+            <h2 class="text-sm font-semibold">Latest relevant posts</h2>
+            <Link
+                :href="postsRoutes.index()"
+                class="text-primary text-xs font-medium hover:underline"
+            >
+                View all
+            </Link>
         </div>
 
         <div class="border-border bg-card rounded-lg border">
-            <div class="p-4">
-                <h2 class="text-sm font-semibold">Latest relevant posts</h2>
-                <p class="text-muted-foreground text-xs">
-                    AI-approved opportunities
-                </p>
-            </div>
-
             <PostsTable
                 :posts="posts"
                 :is-loading="isLoading"
-                :show-status="false"
+                variant="dashboard"
             />
-
-            <div
-                v-if="!isLoading && posts.length > 0"
-                class="border-border border-t p-4"
-            >
-                <Pagination
-                    :current-page="page"
-                    :total-pages="totalPages"
-                    :total-items="total"
-                    :per-page="perPage"
-                    @update:current-page="setPage"
-                />
-            </div>
         </div>
     </div>
 </template>

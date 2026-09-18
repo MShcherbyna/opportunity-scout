@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import { SquareArrowOutUpRight } from '@lucide/vue';
 import EmptyState from '@/components/EmptyState.vue';
+import MarkRelevantButton from '@/components/MarkRelevantButton.vue';
 import PostStatusBadge from '@/components/PostStatusBadge.vue';
 import RelevanceScore from '@/components/RelevanceScore.vue';
 import TableSkeleton from '@/components/TableSkeleton.vue';
@@ -14,22 +15,42 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { initialsFromHandle } from '@/lib/utils';
 import postsRoutes from '@/routes/posts';
 import type { Post } from '@/types';
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         posts: Post[];
         isLoading?: boolean;
-        showStatus?: boolean;
+        /** `full` — the Posts page table. `dashboard` — the compact latest-posts widget. */
+        variant?: 'full' | 'dashboard';
         hasActiveFilters?: boolean;
     }>(),
     {
         isLoading: false,
-        showStatus: true,
+        variant: 'full',
         hasActiveFilters: false,
     },
 );
+
+const showStatus = props.variant === 'full';
+
+function truncate(text: string, length: number): string {
+    return text.length > length ? `${text.slice(0, length).trimEnd()}…` : text;
+}
+
+function postTitle(post: Post): string {
+    return truncate(post.content, 46);
+}
+
+function postExcerpt(post: Post): string {
+    if (post.content.length <= 46) {
+        return '';
+    }
+
+    return truncate(post.content.slice(46).trimStart(), 50);
+}
 </script>
 
 <template>
@@ -64,9 +85,30 @@ withDefaults(
                     <TableCell class="max-w-xs whitespace-normal">
                         <Link
                             :href="postsRoutes.show(post.id)"
-                            class="hover:text-primary line-clamp-2 text-sm font-medium underline-offset-2 hover:underline"
+                            class="group flex items-center gap-2.5"
                         >
-                            {{ post.content }}
+                            <div
+                                v-if="variant === 'dashboard'"
+                                class="bg-secondary text-muted-foreground border-border flex size-7 shrink-0 items-center justify-center rounded-full border text-[10px] font-semibold"
+                            >
+                                {{ initialsFromHandle(post.author) }}
+                            </div>
+                            <div class="min-w-0">
+                                <div
+                                    class="group-hover:text-primary text-sm font-semibold underline-offset-2 group-hover:underline"
+                                >
+                                    {{ postTitle(post) }}
+                                </div>
+                                <div
+                                    class="text-muted-foreground mt-0.5 text-xs"
+                                >
+                                    {{
+                                        variant === 'dashboard'
+                                            ? postExcerpt(post)
+                                            : 'Remote · contract opportunity'
+                                    }}
+                                </div>
+                            </div>
                         </Link>
                     </TableCell>
                     <TableCell class="text-muted-foreground text-sm">
@@ -76,22 +118,48 @@ withDefaults(
                         <PostStatusBadge :status="post.status" />
                     </TableCell>
                     <TableCell>
-                        <RelevanceScore :score="post.relevanceScore" />
+                        <RelevanceScore
+                            :score="post.relevanceScore"
+                            :variant="
+                                variant === 'dashboard' ? 'green' : 'plain'
+                            "
+                        />
                     </TableCell>
                     <TableCell class="text-muted-foreground text-sm">
                         {{ post.foundAt }}
                     </TableCell>
                     <TableCell class="text-right">
-                        <Button variant="outline" size="sm" as-child>
-                            <a
-                                :href="post.threadsUrl"
-                                target="_blank"
-                                rel="noopener noreferrer"
+                        <div class="flex items-center justify-end gap-1.5">
+                            <MarkRelevantButton
+                                v-model:active="post.manuallyMarkedRelevant"
+                            />
+                            <Button
+                                v-if="variant === 'dashboard'"
+                                variant="outline"
+                                size="icon-sm"
+                                as-child
                             >
-                                Threads
-                                <SquareArrowOutUpRight class="size-3.5" />
-                            </a>
-                        </Button>
+                                <a
+                                    :href="post.threadsUrl"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    title="Open in Threads"
+                                >
+                                    <SquareArrowOutUpRight class="size-3.5" />
+                                    <span class="sr-only">Open in Threads</span>
+                                </a>
+                            </Button>
+                            <Button v-else variant="outline" size="sm" as-child>
+                                <a
+                                    :href="post.threadsUrl"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Threads
+                                    <SquareArrowOutUpRight class="size-3.5" />
+                                </a>
+                            </Button>
+                        </div>
                     </TableCell>
                 </TableRow>
             </TableBody>

@@ -1,29 +1,36 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { Badge } from '@/components/ui/badge';
 
-const props = withDefaults(
+withDefaults(
     defineProps<{
         score: number;
-        threshold?: number;
+        /**
+         * `accent` — blue outline pill (post detail).
+         * `green` — filled green pill (dashboard's relevant-posts widget).
+         * `plain` — bare text, no badge (posts table).
+         */
+        variant?: 'accent' | 'green' | 'plain';
+        label?: string;
     }>(),
     {
-        threshold: 75,
+        variant: 'accent',
     },
 );
-
-const isHigh = computed(() => props.score >= props.threshold);
 </script>
 
 <template>
+    <span v-if="variant === 'plain'" class="text-sm tabular-nums"
+        >{{ score }}%<template v-if="label"> {{ label }}</template></span
+    >
     <Badge
+        v-else
         variant="outline"
         :class="
-            isHigh
-                ? 'bg-primary/10 text-primary dark:bg-primary/15 border-transparent'
-                : 'bg-muted text-muted-foreground border-transparent'
+            variant === 'green'
+                ? 'border-transparent bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                : 'bg-primary/10 text-primary dark:bg-primary/15 border-transparent'
         "
     >
-        {{ score }}%
+        {{ score }}%<template v-if="label"> {{ label }}</template>
     </Badge>
 </template>

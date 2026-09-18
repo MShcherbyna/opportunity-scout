@@ -11,6 +11,8 @@ export type Post = {
     foundAt: string;
     publishedAt: string;
     suggestedResponse: string;
+    /** User-driven "mark as relevant" toggle, independent of the AI-assigned status/score. */
+    manuallyMarkedRelevant: boolean;
 };
 
 export type DashboardStats = {

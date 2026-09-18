@@ -12,14 +12,18 @@ const max = computed(() =>
         ...props.data.flatMap((point) => [point.collected, point.relevant]),
     ),
 );
+
+// Thin out date labels once there are too many bars (e.g. a 30-day view) to
+// keep them legible.
+const labelStep = computed(() => Math.ceil(props.data.length / 10));
 </script>
 
 <template>
     <div>
         <div
-            class="border-border flex h-[150px] items-end gap-2 border-b pt-4"
+            class="border-border flex h-[190px] items-end gap-2 border-b pt-4"
             role="img"
-            :aria-label="`Weekly activity: ${data.map((point) => `${point.label} — ${point.collected} collected, ${point.relevant} relevant`).join('; ')}`"
+            :aria-label="`Activity: ${data.map((point) => `${point.label} — ${point.collected} collected, ${point.relevant} relevant`).join('; ')}`"
         >
             <div
                 v-for="point in data"
@@ -40,19 +44,12 @@ const max = computed(() =>
         <div
             class="text-muted-foreground mt-2 flex justify-between text-[10px]"
         >
-            <span v-for="point in data" :key="point.label">{{
-                point.label
-            }}</span>
-        </div>
-        <div class="mt-3 flex items-center gap-4 text-xs">
-            <span class="flex items-center gap-1.5">
-                <span class="bg-muted-foreground/40 size-2 rounded-sm" />
-                Collected
-            </span>
-            <span class="flex items-center gap-1.5">
-                <span class="bg-primary/80 size-2 rounded-sm" />
-                Relevant
-            </span>
+            <span
+                v-for="(point, index) in data"
+                :key="point.label"
+                class="flex-1 text-center"
+                >{{ index % labelStep === 0 ? point.label : '' }}</span
+            >
         </div>
     </div>
 </template>

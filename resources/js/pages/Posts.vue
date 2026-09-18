@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import Pagination from '@/components/Pagination.vue';
 import PostsFilters from '@/components/posts/PostsFilters.vue';
 import PostsTable from '@/components/posts/PostsTable.vue';
+import RunScraperButton from '@/components/RunScraperButton.vue';
 import { usePosts } from '@/composables/usePosts';
 
 defineOptions({
@@ -34,8 +35,20 @@ const {
     <Head title="Posts" />
 
     <div class="flex flex-1 flex-col gap-4 p-4 md:p-6">
+        <div class="flex justify-end">
+            <RunScraperButton />
+        </div>
+
         <div class="border-border bg-card rounded-lg border">
-            <div class="border-border border-b p-4">
+            <div
+                class="border-border flex flex-col gap-3 border-b p-4 sm:flex-row sm:items-center sm:justify-between"
+            >
+                <div>
+                    <h2 class="text-sm font-semibold">All posts</h2>
+                    <p class="text-muted-foreground text-xs">
+                        Filtered and scored by AI
+                    </p>
+                </div>
                 <PostsFilters
                     :status="statusFilter"
                     :sort="sort"

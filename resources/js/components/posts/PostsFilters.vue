@@ -29,10 +29,8 @@ const sortOptions: { value: PostSortOption; label: string }[] = [
 </script>
 
 <template>
-    <div
-        class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
-    >
-        <div class="relative w-full sm:max-w-xs">
+    <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div class="relative w-full sm:w-48">
             <Label for="posts-search" class="sr-only">Search posts</Label>
             <Search
                 class="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2"
@@ -41,54 +39,48 @@ const sortOptions: { value: PostSortOption; label: string }[] = [
                 id="posts-search"
                 :model-value="search"
                 type="search"
-                placeholder="Search posts or authors…"
+                placeholder="Search…"
                 class="pl-8"
                 @update:model-value="search = String($event)"
             />
         </div>
 
-        <div class="flex gap-2">
-            <div>
-                <Label for="posts-status" class="sr-only">Relevance</Label>
-                <Select
-                    :model-value="status"
-                    @update:model-value="status = $event as PostStatusFilter"
+        <Label for="posts-status" class="sr-only">Relevance</Label>
+        <Select
+            :model-value="status"
+            @update:model-value="status = $event as PostStatusFilter"
+        >
+            <SelectTrigger id="posts-status" class="w-full sm:w-40">
+                <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+                <SelectItem
+                    v-for="option in statusOptions"
+                    :key="option.value"
+                    :value="option.value"
                 >
-                    <SelectTrigger id="posts-status" class="w-40">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem
-                            v-for="option in statusOptions"
-                            :key="option.value"
-                            :value="option.value"
-                        >
-                            {{ option.label }}
-                        </SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
+                    {{ option.label }}
+                </SelectItem>
+            </SelectContent>
+        </Select>
 
-            <div>
-                <Label for="posts-sort" class="sr-only">Sort</Label>
-                <Select
-                    :model-value="sort"
-                    @update:model-value="sort = $event as PostSortOption"
+        <Label for="posts-sort" class="sr-only">Sort</Label>
+        <Select
+            :model-value="sort"
+            @update:model-value="sort = $event as PostSortOption"
+        >
+            <SelectTrigger id="posts-sort" class="w-full sm:w-44">
+                <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+                <SelectItem
+                    v-for="option in sortOptions"
+                    :key="option.value"
+                    :value="option.value"
                 >
-                    <SelectTrigger id="posts-sort" class="w-44">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem
-                            v-for="option in sortOptions"
-                            :key="option.value"
-                            :value="option.value"
-                        >
-                            {{ option.label }}
-                        </SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-        </div>
+                    {{ option.label }}
+                </SelectItem>
+            </SelectContent>
+        </Select>
     </div>
 </template>
