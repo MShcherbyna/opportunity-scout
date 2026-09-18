@@ -29,7 +29,10 @@ yarn-error.log
 /.zed
 /.agents
 /.amp
-/.claude
+/.claude/*
+!/.claude/skills
+/.claude/skills/*
+!/.claude/skills/engineering-insights
 /.cursor
 /.factory
 /.grok
@@ -38,7 +41,7 @@ yarn-error.log
 /.pi
 /.mcp.json
 /AGENTS.md
-/CLAUDE.md
+# /CLAUDE.md — tracked; carries the committed engineering-insights instructions
 /boost.json
 /opencode.json
 /opencode.jsonc
