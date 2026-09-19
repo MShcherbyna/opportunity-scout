@@ -11,6 +11,9 @@ Route::get('/', [AuthenticatedSessionController::class, 'create'])
     ->middleware(['guest:'.config('fortify.guard')])
     ->name('home');
 
+Route::inertia('privacy', 'legal/Privacy')->name('privacy');
+Route::inertia('data-deletion', 'legal/DataDeletion')->name('data-deletion');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
 

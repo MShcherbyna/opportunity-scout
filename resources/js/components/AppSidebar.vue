@@ -2,11 +2,13 @@
 import { Link } from '@inertiajs/vue3';
 import { LayoutGrid, Rss, Settings, X } from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
+import LegalLinks from '@/components/LegalLinks.vue';
 import NavMain from '@/components/NavMain.vue';
 import { Button } from '@/components/ui/button';
 import {
     Sidebar,
     SidebarContent,
+    SidebarFooter,
     SidebarHeader,
     useSidebar,
 } from '@/components/ui/sidebar';
@@ -63,6 +65,10 @@ const { toggleSidebar } = useSidebar();
         <SidebarContent>
             <NavMain :items="mainNavItems" />
         </SidebarContent>
+
+        <SidebarFooter>
+            <LegalLinks />
+        </SidebarFooter>
     </Sidebar>
     <slot />
 </template>

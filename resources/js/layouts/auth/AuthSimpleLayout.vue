@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import LegalLinks from '@/components/LegalLinks.vue';
 import { Button } from '@/components/ui/button';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { login, register } from '@/routes';
@@ -61,5 +62,9 @@ const onSignIn = computed(() => isCurrentUrl(login()) || isCurrentUrl('/'));
                 </div>
             </div>
         </div>
+
+        <footer class="px-6 py-6">
+            <LegalLinks />
+        </footer>
     </div>
 </template>
