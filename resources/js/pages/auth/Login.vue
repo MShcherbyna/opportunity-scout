@@ -14,7 +14,7 @@ import { request } from '@/routes/password';
 
 defineOptions({
     layout: {
-        title: 'Sign in to Threads Scraper',
+        title: 'Sign in to Opportunity Scout',
         description: 'Monitor useful opportunities on Threads',
     },
 });

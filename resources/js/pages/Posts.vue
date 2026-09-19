@@ -3,7 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import Pagination from '@/components/Pagination.vue';
 import PostsFilters from '@/components/posts/PostsFilters.vue';
 import PostsTable from '@/components/posts/PostsTable.vue';
-import RunScraperButton from '@/components/RunScraperButton.vue';
+import RunScoutButton from '@/components/RunScoutButton.vue';
 import { usePosts } from '@/composables/usePosts';
 
 defineOptions({
@@ -36,7 +36,7 @@ const {
 
     <div class="flex flex-1 flex-col gap-4 p-4 md:p-6">
         <div class="flex justify-end">
-            <RunScraperButton />
+            <RunScoutButton />
         </div>
 
         <div class="border-border bg-card rounded-lg border">

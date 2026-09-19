@@ -1,5 +1,23 @@
 
-## Threads scraper app.
+## Opportunity Scout app.
+
+Opportunity Scout
+
+Opportunity Scout is a service for automatically discovering and collecting relevant posts from Threads based on specified keywords.
+
+The main goal of the project is to find potentially useful posts, such as job openings, work opportunities, or service requests, store them, and provide a convenient interface for reviewing and managing them.
+
+Key Features
+User authentication and registration
+Keyword configuration for post discovery
+Configurable post-fetching frequency
+Fetching posts via the Threads API
+Filtering and storing relevant posts
+Dashboard with statistics on discovered posts
+Viewing a list of collected posts
+Direct links to original posts on Threads
+Ability to store a predefined response template
+Notifications about new relevant posts
 
 ## Running with Docker
 

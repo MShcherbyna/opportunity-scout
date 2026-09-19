@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import ScraperSettingsTabs from '@/components/settings/ScraperSettingsTabs.vue';
-import ScrapingSettingsForm from '@/components/settings/ScrapingSettingsForm.vue';
+import AiFilteringSettingsForm from '@/components/settings/AiFilteringSettingsForm.vue';
+import ScoutSettingsTabs from '@/components/settings/ScoutSettingsTabs.vue';
 
 defineOptions({
     layout: {
@@ -12,10 +12,10 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Scraping settings" />
+    <Head title="AI filtering settings" />
 
     <div class="flex flex-1 flex-col gap-4 p-4 md:p-6">
-        <ScraperSettingsTabs />
-        <ScrapingSettingsForm />
+        <ScoutSettingsTabs />
+        <AiFilteringSettingsForm />
     </div>
 </template>

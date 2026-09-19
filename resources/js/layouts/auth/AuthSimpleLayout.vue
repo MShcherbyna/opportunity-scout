@@ -23,7 +23,7 @@ const onSignIn = computed(() => isCurrentUrl(login()) || isCurrentUrl('/'));
         <header class="flex items-center justify-between px-6 py-5 sm:px-10">
             <Link :href="login()" class="flex items-center">
                 <AppLogoIcon class="size-8" />
-                <span class="sr-only">Threads Scraper</span>
+                <span class="sr-only">Opportunity Scout</span>
             </Link>
 
             <nav class="flex items-center gap-2">

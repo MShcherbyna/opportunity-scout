@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import ScraperSettingsTabs from '@/components/settings/ScraperSettingsTabs.vue';
+import ScoutSettingsTabs from '@/components/settings/ScoutSettingsTabs.vue';
 import TelegramSettingsForm from '@/components/settings/TelegramSettingsForm.vue';
 
 defineOptions({
@@ -15,7 +15,7 @@ defineOptions({
     <Head title="Integration settings" />
 
     <div class="flex flex-1 flex-col gap-4 p-4 md:p-6">
-        <ScraperSettingsTabs />
+        <ScoutSettingsTabs />
         <TelegramSettingsForm />
     </div>
 </template>

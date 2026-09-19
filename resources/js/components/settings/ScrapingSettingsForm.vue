@@ -61,7 +61,7 @@ async function handleSave() {
     >
         <h2 class="text-sm font-semibold">Search &amp; scraping</h2>
         <p class="text-muted-foreground text-xs">
-            Configure how Threads Scraper collects posts.
+            Configure how Opportunity Scout collects posts.
         </p>
 
         <div class="mt-5 grid gap-5 sm:grid-cols-2">

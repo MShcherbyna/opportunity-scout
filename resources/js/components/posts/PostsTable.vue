@@ -63,7 +63,7 @@ function postExcerpt(post: Post): string {
             :description="
                 hasActiveFilters
                     ? 'No posts match your current filters. Try a different status or search term.'
-                    : 'Threads Scraper hasn’t collected anything yet. Check your keywords and scraping frequency, then wait for the next run.'
+                    : 'Opportunity Scout hasn’t collected anything yet. Check your keywords and scraping frequency, then wait for the next run.'
             "
         />
 

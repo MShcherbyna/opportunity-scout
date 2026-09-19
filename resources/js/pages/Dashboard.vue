@@ -4,7 +4,7 @@ import { AlertTriangle, CalendarDays, Inbox, Target } from '@lucide/vue';
 import ActivityChart from '@/components/ActivityChart.vue';
 import MetricCard from '@/components/MetricCard.vue';
 import PostsTable from '@/components/posts/PostsTable.vue';
-import RunScraperButton from '@/components/RunScraperButton.vue';
+import RunScoutButton from '@/components/RunScoutButton.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
@@ -70,7 +70,7 @@ const { posts, isLoading } = usePosts({
                 </p>
             </div>
             <div class="flex items-center gap-2">
-                <RunScraperButton />
+                <RunScoutButton />
                 <Select
                     :model-value="period"
                     @update:model-value="period = $event as ActivityPeriod"

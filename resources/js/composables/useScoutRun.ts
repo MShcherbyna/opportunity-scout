@@ -6,16 +6,16 @@ import { toast } from 'vue-sonner';
 // rendered in more than one place at once.
 const isRunning = ref(false);
 
-export type UseScraperRunReturn = {
+export type UseScoutRunReturn = {
     isRunning: Ref<boolean>;
     run: () => Promise<void>;
 };
 
 /**
- * Frontend-only mock of a scraper run. Does not contact a backend, queue, or
+ * Frontend-only mock of a scout run. Does not contact a backend, queue, or
  * scraping worker — it only simulates the loading/success UX.
  */
-export function useScraperRun(): UseScraperRunReturn {
+export function useScoutRun(): UseScoutRunReturn {
     async function run() {
         if (isRunning.value) {
             return;
@@ -26,7 +26,7 @@ export function useScraperRun(): UseScraperRunReturn {
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
         isRunning.value = false;
-        toast.success('Scraper run complete — 12 new posts collected');
+        toast.success('Scout run complete — 12 new posts collected');
     }
 
     return { isRunning, run };

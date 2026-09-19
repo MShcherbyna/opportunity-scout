@@ -22,9 +22,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'postId' => (int) $post,
     ]))->name('posts.show');
 
-    Route::inertia('settings/scraping', 'scraper-settings/Scraping')->name('settings.scraping');
-    Route::inertia('settings/ai-filtering', 'scraper-settings/AiFiltering')->name('settings.aiFiltering');
-    Route::inertia('settings/integrations', 'scraper-settings/Integrations')->name('settings.integrations');
+    Route::inertia('settings/scraping', 'scout-settings/Scraping')->name('settings.scraping');
+    Route::inertia('settings/ai-filtering', 'scout-settings/AiFiltering')->name('settings.aiFiltering');
+    Route::inertia('settings/integrations', 'scout-settings/Integrations')->name('settings.integrations');
 });
 
 require __DIR__.'/settings.php';
