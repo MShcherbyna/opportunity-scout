@@ -1,4 +1,9 @@
-import type { AiSettings, ScrapingSettings, TelegramSettings } from '@/types';
+import type {
+    AiSettings,
+    ScrapingSettings,
+    TelegramSettings,
+    ThreadsAccount,
+} from '@/types';
 
 export const defaultScrapingSettings: ScrapingSettings = {
     checkFrequency: '15',
@@ -23,4 +28,12 @@ export const defaultTelegramSettings: TelegramSettings = {
     chatId: '',
     minimumRelevance: 75,
     delivery: 'immediately',
+};
+
+// Stand-in for the account returned by the Threads OAuth callback.
+export const mockThreadsAccount: ThreadsAccount = {
+    username: 'maksym.dev',
+    displayName: 'Maksym Shcherbyna',
+    connectedAt: '2026-09-19T10:00:00Z',
+    tokenExpiresAt: '2026-11-18T10:00:00Z',
 };

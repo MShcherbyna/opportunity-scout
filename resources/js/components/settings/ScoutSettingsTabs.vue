@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
-import { aiFiltering, integrations, scraping } from '@/routes/settings';
+import { aiFiltering, integrations, scraping, threads } from '@/routes/settings';
 import type { NavItem } from '@/types';
 
 const tabs: NavItem[] = [
     { title: 'Scraping', href: scraping() },
     { title: 'AI Filtering', href: aiFiltering() },
+    { title: 'Threads', href: threads() },
     { title: 'Integrations', href: integrations() },
 ];
 

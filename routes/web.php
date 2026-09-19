@@ -27,6 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::inertia('settings/scraping', 'scout-settings/Scraping')->name('settings.scraping');
     Route::inertia('settings/ai-filtering', 'scout-settings/AiFiltering')->name('settings.aiFiltering');
+    Route::inertia('settings/threads', 'scout-settings/Threads')->name('settings.threads');
     Route::inertia('settings/integrations', 'scout-settings/Integrations')->name('settings.integrations');
 });
 

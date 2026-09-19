@@ -58,4 +58,13 @@ export type TelegramSettings = {
     delivery: NotificationDelivery;
 };
 
+export type ThreadsAccount = {
+    username: string;
+    displayName: string;
+    connectedAt: string;
+    tokenExpiresAt: string;
+};
+
+export type ThreadsConnectionState = 'idle' | 'connecting' | 'disconnecting';
+
 export type SaveState = 'idle' | 'saving' | 'success' | 'error';
