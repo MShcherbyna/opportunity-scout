@@ -26,6 +26,7 @@ Every entry should be specific enough that an agent reading it cold knows
 exactly what to do or avoid, without needing to re-investigate.
 
 **Qualifies for an entry:**
+
 - An environment-specific error or behavior that isn't documented anywhere
   (e.g. a difference between local and staging config).
 - The exact command/arguments needed for a task that isn't the obvious default
@@ -34,6 +35,7 @@ exactly what to do or avoid, without needing to re-investigate.
 - Code that's fragile, auto-generated, or must never be touched a certain way.
 
 **Does not qualify:**
+
 - A one-time edit or a decision scoped to a single task.
 - Anything already covered by existing documentation, the vendor skills, or
   `.ai/rules`.
@@ -41,9 +43,11 @@ exactly what to do or avoid, without needing to re-investigate.
 ## Vague vs. useful
 
 **Vague (don't write this):**
+
 > Be careful with Promise.all, it can fail unexpectedly.
 
 **Useful (write this instead):**
+
 > Promise.all rejects and discards all results the moment one promise rejects.
 > If you need partial results from N independent async calls, use
 > Promise.allSettled and filter by status, not Promise.all wrapped in a single
@@ -52,9 +56,11 @@ exactly what to do or avoid, without needing to re-investigate.
 ---
 
 **Vague:**
+
 > Zustand state can get out of sync sometimes.
 
 **Useful:**
+
 > A Zustand selector that returns a new object/array literal on every call
 > (e.g. `state => ({a: state.a, b: state.b})`) breaks referential equality and
 > re-renders every subscriber on every store update, even unrelated ones.
@@ -63,9 +69,11 @@ exactly what to do or avoid, without needing to re-investigate.
 ---
 
 **Vague:**
+
 > Watch out for N+1 queries.
 
 **Useful (illustrative template — write real entries with real file:line from this repo):**
+
 > 2026-09-12 — A controller loaded `Thread::all()` then accessed
 > `$thread->author->name` while mapping Inertia props, causing an N+1 (1 +
 > count(threads) queries). Adding `->with('author')` dropped the query count
@@ -76,9 +84,11 @@ exactly what to do or avoid, without needing to re-investigate.
 ---
 
 **Vague:**
+
 > Queued jobs might not run in local dev.
 
 **Useful (illustrative template):**
+
 > `QUEUE_CONNECTION=sync` locally means jobs run inline on dispatch — no worker
 > needed. On staging `QUEUE_CONNECTION=database`, so a job dispatched from a
 > request silently never runs unless a queue worker process is active. If a

@@ -10,17 +10,17 @@ codebase. This is raw session capture, not vetted policy — it is explicitly a
 draft for future spot-checking. It is a different mechanism from Boost's
 `.ai/rules` (durable, approved conventions recorded via `record-rule`/the
 `infer-conventions` skill). Never write a durable "this is how we do X" rule
-here — that belongs in `.ai/rules`. This skill records what someone *discovered*,
+here — that belongs in `.ai/rules`. This skill records what someone _discovered_,
 dated, so the next session (human or agent) doesn't rediscover it the hard way.
 
 ## The two files
 
-| File | Covers |
-| --- | --- |
+| File                       | Covers                                                                                              |
+| -------------------------- | --------------------------------------------------------------------------------------------------- |
 | `.ai/insights/frontend.md` | Anything under `resources/**` (Vue components, pages, composables, layouts, CSS, Inertia page code) |
-| `.ai/insights/backend.md` | Everything else: `app/**`, `routes/**`, `database/**`, `tests/**`, `config/**`, `bootstrap/**` |
+| `.ai/insights/backend.md`  | Everything else: `app/**`, `routes/**`, `database/**`, `tests/**`, `config/**`, `bootstrap/**`      |
 
-Route by the path glob of the code the finding is *about*, not by "what kind of
+Route by the path glob of the code the finding is _about_, not by "what kind of
 task was this". A single session can produce entries in both files — split them,
 don't force everything into one file for convenience.
 
@@ -53,7 +53,7 @@ don't write it.
 ## The seven sections
 
 Every insight file has exactly these headings, in this order. Append new
-entries at the *end* of the relevant section — never reorder or rewrite
+entries at the _end_ of the relevant section — never reorder or rewrite
 existing entries.
 
 1. **What Works** — a pattern, approach, or library usage that worked well here.
@@ -80,11 +80,12 @@ finding traces to specific code.
 ## Append-only discipline
 
 - Never edit or delete an existing entry, even a wrong or outdated one.
-- A correction is a *new*, dated entry — write it under the same section (or
+- A correction is a _new_, dated entry — write it under the same section (or
   Session Notes) and say what changed and why, referencing the old entry's date
   if useful. Do not go back and edit the original.
 
 **Mechanical safeguards (do not skip these, even in a hurry):**
+
 - Never rewrite either insight file from memory or reconstruct it wholesale.
   Always re-read the target file immediately before editing it, in this same
   turn — its content may have changed since you last saw it (another session,
