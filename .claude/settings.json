@@ -1,0 +1,8 @@
+{
+  "enabledPlugins": {
+    "sdd-engineering@dev-digest-toolkit": true,
+    "engineering-paved-path@dev-digest-toolkit": true,
+    "research-tools@dev-digest-toolkit": true,
+    "architecture-review@dev-digest-toolkit": true
+  }
+}
