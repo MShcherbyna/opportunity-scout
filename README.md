@@ -1,4 +1,3 @@
-
 ## Opportunity Scout app.
 
 Opportunity Scout
@@ -26,27 +25,27 @@ install is needed — the image builds everything.
 
 1. Copy the environment file and point it at the `mysql` service:
 
-   ```bash
-   cp .env.example .env
-   ```
+    ```bash
+    cp .env.example .env
+    ```
 
-   Edit `.env` and set:
+    Edit `.env` and set:
 
-   ```
-   DB_CONNECTION=mysql
-   DB_HOST=mysql
-   DB_PORT=3306
-   DB_DATABASE=threads_scraper
-   DB_USERNAME=sail
-   DB_PASSWORD=password
-   APP_URL=http://localhost:8091
-   ```
+    ```
+    DB_CONNECTION=mysql
+    DB_HOST=mysql
+    DB_PORT=3306
+    DB_DATABASE=threads_scraper
+    DB_USERNAME=sail
+    DB_PASSWORD=password
+    APP_URL=http://localhost:8091
+    ```
 
 2. Build the image:
 
-   ```bash
-   docker compose build
-   ```
+    ```bash
+    docker compose build
+    ```
 
 3. Install PHP dependencies **before** the stack's first boot. The `mysql`
    service bind-mounts a script from `vendor/laravel/sail`, so `vendor/` has
@@ -54,29 +53,29 @@ install is needed — the image builds everything.
    directory in its place and a later `composer install` fails with
    `is a directory`. `--no-deps` keeps this run from starting `mysql` early:
 
-   ```bash
-   docker compose run --rm --no-deps laravel.test composer install
-   ```
+    ```bash
+    docker compose run --rm --no-deps laravel.test composer install
+    ```
 
 4. Start the stack:
 
-   ```bash
-   docker compose up -d
-   ```
+    ```bash
+    docker compose up -d
+    ```
 
 5. Generate the app key and run migrations:
 
-   ```bash
-   docker compose exec laravel.test php artisan key:generate
-   docker compose exec laravel.test php artisan migrate
-   ```
+    ```bash
+    docker compose exec laravel.test php artisan key:generate
+    docker compose exec laravel.test php artisan migrate
+    ```
 
 6. Install and build frontend assets:
 
-   ```bash
-   docker compose exec laravel.test npm install
-   docker compose exec laravel.test npm run build
-   ```
+    ```bash
+    docker compose exec laravel.test npm install
+    docker compose exec laravel.test npm run build
+    ```
 
 7. Visit `http://localhost:8091` (or whatever `APP_PORT` you set in `.env`).
 
