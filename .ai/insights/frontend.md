@@ -12,6 +12,18 @@ store; see `.ai/rules` (if present) for approved, durable conventions.
 
 ## Codebase Patterns
 
+### 2026-10-21
+
+Account pages live under `/account/*` (routes in `routes/account.php`, page
+prefix `account/`, sub-layout `layouts/account/Layout.vue`, picked in
+`resources/js/app.ts` by `name.startsWith('account/')`). `/settings/*` is
+scout-only (`pages/scout-settings/*`, default `AppLayout`). The main-nav
+`activeMatch: '/settings'` in `AppSidebar.vue` relies on that split, so do not
+put account pages back under `/settings`. Old `/settings/profile` etc. return
+404 by decision (no legacy redirects).
+Evidence: `routes/account.php`, `routes/web.php` (`settings.` group),
+`resources/js/app.ts`
+
 ## Tool & Library Notes
 
 ### 2026-09-18
