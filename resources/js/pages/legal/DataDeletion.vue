@@ -26,8 +26,8 @@ const contactEmail = 'privacy@your-domain.com';
         <section class="space-y-2">
             <h2 class="text-lg font-medium">Revoke Threads access</h2>
             <p>
-                You can also remove Opportunity Scout in Threads under Settings →
-                Account → Website permissions.
+                You can also remove Opportunity Scout in Threads under Settings
+                → Account → Website permissions.
             </p>
         </section>
 

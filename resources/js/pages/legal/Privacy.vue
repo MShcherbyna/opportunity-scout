@@ -37,8 +37,8 @@ const contactEmail = 'privacy@your-domain.com';
                     and an access token.
                 </li>
                 <li>
-                    Public Threads posts that match your keywords: post ID, text,
-                    author username, link and timestamp.
+                    Public Threads posts that match your keywords: post ID,
+                    text, author username, link and timestamp.
                 </li>
                 <li>
                     Your settings: keywords, schedule, response template and
@@ -78,9 +78,9 @@ const contactEmail = 'privacy@your-domain.com';
             </p>
             <p>
                 Collected posts are automatically deleted 30 days after they
-                were collected, unless you responded to them (copied a
-                suggested response or marked the post as relevant). Posts you
-                responded to are kept until you delete them or your account.
+                were collected, unless you responded to them (copied a suggested
+                response or marked the post as relevant). Posts you responded to
+                are kept until you delete them or your account.
             </p>
         </section>
 
