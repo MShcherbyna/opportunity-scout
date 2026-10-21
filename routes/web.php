@@ -11,6 +11,9 @@ Route::get('/', [AuthenticatedSessionController::class, 'create'])
     ->middleware(['guest:'.config('fortify.guard')])
     ->name('home');
 
+Route::inertia('privacy', 'legal/Privacy')->name('privacy');
+Route::inertia('data-deletion', 'legal/DataDeletion')->name('data-deletion');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
 
@@ -24,6 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::inertia('settings/scraping', 'scout-settings/Scraping')->name('settings.scraping');
     Route::inertia('settings/ai-filtering', 'scout-settings/AiFiltering')->name('settings.aiFiltering');
+    Route::inertia('settings/threads', 'scout-settings/Threads')->name('settings.threads');
     Route::inertia('settings/integrations', 'scout-settings/Integrations')->name('settings.integrations');
 });
 
