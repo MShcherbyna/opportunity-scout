@@ -62,8 +62,8 @@ async function handleDisconnect() {
         </dl>
 
         <p v-else class="text-muted-foreground mt-5 text-sm">
-            You will be redirected to Threads to authorize read access. We
-            never post on your behalf.
+            You will be redirected to Threads to authorize read access. We never
+            post on your behalf.
         </p>
 
         <div class="mt-5">

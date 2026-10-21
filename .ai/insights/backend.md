@@ -38,9 +38,48 @@ $post]))->name('posts.show');`.
 Evidence: `vendor/inertiajs/inertia-laravel/src/ServiceProvider.php:155`,
 `routes/web.php` (posts.show route)
 
+### 2026-10-21
+
+`.claude/` is gitignored except `.claude/skills/engineering-insights`, so the
+project agents (`.claude/agents/*`) and their guard hooks (`.claude/hooks/*`)
+exist only locally and never show up in `git status`/`git diff`. `vp check`
+(`npm run check`) also skips gitignored paths, so Markdown under `.claude/` is
+never format-checked by it — run `npx --no-install vp check <file>` on such
+files directly. The agents' Bash guard hooks split commands on `|`, `;`, `&`
+even inside quotes, so `grep "a|b"` is blocked; use `grep -e a -e b` or the
+Grep tool.
+Evidence: `.gitignore:32` — `/.claude/*`; `.claude/hooks/readonly-bash-guard.sh`
+
 ## Recurring Errors & Fixes
 
+### 2026-10-21
+
+Root cause of the 18 failing auth/session tests (Open Questions, 2026-09-18):
+`docker-compose.yml` sets `APP_ENV: local` in the container environment, so it
+lands in `$_SERVER`, which Laravel's env repository reads before `$_ENV`.
+`phpunit.xml`'s `<env name="APP_ENV" value="testing"/>` therefore lost, the app
+ran tests as `local`, CSRF stayed active and every POST/PATCH/DELETE got 419.
+`<env ... force="true"/>` does NOT fix it (PHPUnit's force only sets
+`putenv`/`$_ENV`); `<server name="APP_ENV" value="testing"/>` does (PHPUnit sets
+`$_SERVER` unconditionally). Full suite in docker went 18 failed → 41 passed.
+Run tests with `docker compose exec -T laravel.test php artisan test --compact`
+— on the host the DB host `mysql` does not resolve.
+Evidence: `docker-compose.yml:11` — `APP_ENV: local`; `phpunit.xml:21` — added
+`<server>` line; `vendor/phpunit/phpunit/src/TextUI/Configuration/PhpHandler.php:119-147`
+— `$_SERVER` set unconditionally vs `force` only affecting `putenv`/`$_ENV`
+
 ## Session Notes (datestamped)
+
+### 2026-10-21
+
+After renaming/moving an Inertia page, feature tests that render it fail with
+500 `Unable to locate file in Vite manifest: resources/js/pages/<new>.vue`
+until `npm run build` refreshes the gitignored `public/build` manifest (the
+docker container reads the host's `public/build`). Run `npm run build` before
+the suite after page renames. The 2026-09-18 "18 failing tests" open question
+below is closed (see the 2026-10-21 Recurring Errors entry).
+Evidence: `public/build` is gitignored; suite went 44 passed/4 failed ->
+48 passed after `npm run build`.
 
 ## Open Questions
 

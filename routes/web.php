@@ -25,10 +25,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'postId' => (int) $post,
     ]))->name('posts.show');
 
-    Route::inertia('settings/scraping', 'scout-settings/Scraping')->name('settings.scraping');
-    Route::inertia('settings/ai-filtering', 'scout-settings/AiFiltering')->name('settings.aiFiltering');
-    Route::inertia('settings/threads', 'scout-settings/Threads')->name('settings.threads');
-    Route::inertia('settings/integrations', 'scout-settings/Integrations')->name('settings.integrations');
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::redirect('/', '/settings/scraping');
+
+        Route::inertia('scraping', 'scout-settings/Scraping')->name('scraping');
+        Route::inertia('ai-filtering', 'scout-settings/AiFiltering')->name('aiFiltering');
+        Route::inertia('threads', 'scout-settings/Threads')->name('threads');
+        Route::inertia('integrations', 'scout-settings/Integrations')->name('integrations');
+    });
 });
 
-require __DIR__.'/settings.php';
+require __DIR__.'/account.php';
