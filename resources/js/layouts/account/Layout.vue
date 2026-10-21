@@ -31,7 +31,7 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
 <template>
     <div class="px-4 py-6">
         <Heading
-            title="Settings"
+            title="Account"
             description="Manage your profile and account settings"
         />
 
@@ -39,7 +39,7 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
             <aside class="w-full max-w-xl lg:w-48">
                 <nav
                     class="flex flex-col space-y-1 space-x-0"
-                    aria-label="Settings"
+                    aria-label="Account"
                 >
                     <Button
                         v-for="item in sidebarNavItems"
