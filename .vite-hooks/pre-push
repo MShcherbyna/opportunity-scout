@@ -1,0 +1,17 @@
+# Mirrors `composer ci:check` (the CI "Run CI Checks" step) before pushing.
+# Tests run inside the Sail container when it is up, because the DB host
+# `mysql` only resolves there. Skip with `git push --no-verify`.
+set -e
+
+npm run check
+npm run types:check
+vendor/bin/pint --parallel --test
+vendor/bin/phpstan analyse --memory-limit=1G --no-progress
+
+if docker compose ps --status running --services 2>/dev/null | grep -qx laravel.test; then
+    docker compose exec -T laravel.test php artisan config:clear --ansi
+    docker compose exec -T laravel.test php artisan test --compact
+else
+    php artisan config:clear --ansi
+    php artisan test --compact
+fi
