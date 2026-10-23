@@ -12,6 +12,7 @@ class PostListing
 
     /**
      * One page of the user's posts, newest first; a page past the end is clamped to the last page.
+     * The search uses an explicit `escape '!'` because SQLite's LIKE has no default escape character.
      *
      * @return LengthAwarePaginator<int, ThreadsPost>
      */
@@ -19,8 +20,10 @@ class PostListing
     {
         $query = $user->threadsPosts()
             ->when($search !== '', function ($query) use ($search): void {
-                $term = '%'.addcslashes($search, '\\%_').'%';
-                $query->where(fn ($query) => $query->where('text', 'like', $term)->orWhere('username', 'like', $term));
+                $term = '%'.str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $search).'%';
+                $query->where(fn ($query) => $query
+                    ->whereRaw("text like ? escape '!'", [$term])
+                    ->orWhereRaw("username like ? escape '!'", [$term]));
             })
             ->when($keyword !== null, fn ($query) => $query->where('keyword', $keyword));
 
