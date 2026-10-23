@@ -183,6 +183,20 @@ displaying the value, not this key.
 Evidence: `tests/Feature/Threads/ThreadsCallbackTest.php` (DT-1,
 `test_error_parameter_leaves_the_connection_unchanged_and_never_echoes_it`)
 
+### 2026-10-23
+
+Locally the suite runs on MySQL in docker, but CI (`composer setup` and then
+`composer ci:check`) migrates and tests on SQLite, the `.env.example` default.
+MySQL-only SQL is green locally and fails on the PR. Two cases came up:
+`->collation('utf8mb4_bin')` breaks the migration ("no such collation
+sequence"), and LIKE with backslash-escaped `%`/`_` stops matching, because
+SQLite LIKE has no default escape character. Apply the collation only for the
+mysql/mariadb drivers, and use an explicit `escape '!'`. Before you push,
+reproduce CI with:
+`DB_CONNECTION=sqlite DB_DATABASE=:memory: DB_URL= php -d memory_limit=1G artisan test --compact`.
+Evidence: `database/migrations/2026_10_22_214545_create_threads_keywords_table.php`,
+`app/Services/Threads/PostListing.php` (`paginate()`), `.github/workflows/tests.yml`
+
 ## Session Notes (datestamped)
 
 ### 2026-10-21
