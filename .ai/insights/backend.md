@@ -50,6 +50,45 @@ even inside quotes, so `grep "a|b"` is blocked; use `grep -e a -e b` or the
 Grep tool.
 Evidence: `.gitignore:32` — `/.claude/*`; `.claude/hooks/readonly-bash-guard.sh`
 
+### 2026-10-23
+
+Query-builder `update([...])` (e.g. a compare-and-set
+`ThreadsConnection::whereKey(...)->where(...)->update()`) bypasses the model's
+`encrypted` cast, so a token written that way is stored as plaintext and the
+next cast read throws `DecryptException`. Encrypt it yourself with the same
+encrypter the cast uses: `Crypt::encryptString($token)` (equivalent to
+`currentEncrypter()->encrypt($v, false)` while no custom encrypter is set).
+Evidence: `app/Models/ThreadsConnection.php` (`storeRefreshedTokenIfUnchanged`)
+
+### 2026-10-23
+
+Guzzle's `ConnectionException` message contains the full request URL. Threads
+takes `access_token` as a query parameter, so wrapping that exception (as
+`previous`, or by copying its message) leaks the token into logs and
+`failed_jobs`. `ThreadsClient` throws a fresh `ThreadsApiException` without
+`previous` for connection failures; keep it that way.
+Evidence: `app/Services/Threads/ThreadsClient.php` (catch in `send()`)
+
+### 2026-10-23
+
+`Schedule::...->withoutOverlapping()` defaults to a 1440-minute mutex. With
+`CACHE_STORE=database` the mutex survives restarts, so a SIGKILLed scheduler
+blocks an every-minute command for up to 24 h with no error. Always pass an
+expiry (`withoutOverlapping(5)` for the search dispatcher, 60 for the daily
+commands). Also: `composer types:check` needs `--memory-limit=1G`, because the
+host PHP CLI has `memory_limit=128M` and PHPStan's parallel worker crashes
+there (it passes inside the container).
+Evidence: `routes/console.php`, `composer.json` (`types:check` script)
+
+### 2026-10-23
+
+`vp check --fix` (`npm run check -- --fix`) also reformats untracked Markdown
+under `.ai/docs/` (specs, plans, `_uk` translations, run ledgers) and pads
+tables (`|---|` → `| --- |` with aligned columns). A script that edits those
+files by matching the exact separator row then silently does nothing, so
+match the table header with a regex, or re-read the file after a format run.
+Evidence: `.ai/docs/runs/2026-10-23-0034--threads-connection-and-keyword-search.md`
+
 ## Recurring Errors & Fixes
 
 ### 2026-10-21
@@ -67,6 +106,17 @@ Run tests with `docker compose exec -T laravel.test php artisan test --compact`
 Evidence: `docker-compose.yml:11` — `APP_ENV: local`; `phpunit.xml:21` — added
 `<server>` line; `vendor/phpunit/phpunit/src/TextUI/Configuration/PhpHandler.php:119-147`
 — `$_SERVER` set unconditionally vs `force` only affecting `putenv`/`$_ENV`
+
+### 2026-10-23
+
+Laravel's `StartSession` stores the full URL of every GET request, query string
+included, in the session key `_previous.url`. A test asserting "the OAuth
+`error_description` value never reaches the session" therefore always fails,
+even though the controller never stores it. Exclude the framework key:
+`Arr::except(session()->all(), ['_previous'])`. The real UI-1 risk is
+displaying the value, not this key.
+Evidence: `tests/Feature/Threads/ThreadsCallbackTest.php` (DT-1,
+`test_error_parameter_leaves_the_connection_unchanged_and_never_echoes_it`)
 
 ## Session Notes (datestamped)
 

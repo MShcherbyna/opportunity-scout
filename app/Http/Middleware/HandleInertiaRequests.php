@@ -41,7 +41,28 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'threadsConnection' => fn () => $this->threadsConnectionFor($request),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+        ];
+    }
+
+    /**
+     * The signed-in user's Threads connection summary for the disconnected banner.
+     *
+     * @return array{status: string, disconnectReason: string|null, username: string}|null
+     */
+    private function threadsConnectionFor(Request $request): ?array
+    {
+        $connection = $request->user()?->threadsConnection()->first();
+
+        if ($connection === null) {
+            return null;
+        }
+
+        return [
+            'status' => $connection->status->value,
+            'disconnectReason' => $connection->disconnect_reason?->value,
+            'username' => $connection->username,
         ];
     }
 }

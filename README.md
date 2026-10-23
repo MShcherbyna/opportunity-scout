@@ -79,6 +79,40 @@ install is needed — the image builds everything.
 
 7. Visit `http://localhost:8091` (or whatever `APP_PORT` you set in `.env`).
 
+### Background processes (queue and scheduler)
+
+Searching Threads and refreshing tokens need **both** extra services, which
+`docker compose up -d` starts alongside the app:
+
+- `queue` runs `php artisan queue:work --tries=1 --timeout=330` and executes
+  the search jobs.
+- `scheduler` runs `php artisan schedule:work` and fires the scheduled
+  commands:
+    - `threads:dispatch-search-runs` (every minute) queues due search runs
+    - `threads:refresh-tokens` (daily) refreshes expiring Threads tokens
+    - `threads:prune-posts` (daily) deletes old collected posts
+
+Without them nothing is searched and tokens expire unnoticed.
+
+Queue timings must nest: job `$timeout` (300 s) < worker `--timeout` (330 s)
+< `DB_QUEUE_RETRY_AFTER` (360 s, the default in `.env.example`). If
+`retry_after` is not larger than the worker timeout, a slow job is picked up
+a second time while still running. Change them together.
+
+### Threads configuration
+
+Set these in `.env` (see `.env.example`):
+
+```
+THREADS_APP_ID=
+THREADS_APP_SECRET=
+THREADS_REDIRECT_URI="${APP_URL}/auth/threads/callback"
+THREADS_AUTHORIZE_URL=https://threads.net/oauth/authorize
+THREADS_GRAPH_URL=https://graph.threads.net
+THREADS_OWN_POSTS_ONLY=false
+DB_QUEUE_RETRY_AFTER=360
+```
+
 ### Common commands
 
 ```bash
