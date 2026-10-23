@@ -4,6 +4,7 @@ namespace App\Services\Threads;
 
 use App\Enums\ThreadsConnectionStatus;
 use App\Enums\ThreadsSearchRunTrigger;
+use App\Models\ThreadsSearchRun;
 use App\Models\User;
 use Carbon\CarbonInterface;
 
@@ -14,21 +15,17 @@ class SearchStatus
     public function __construct(private SearchBudget $budget) {}
 
     /**
-     * Build the `searchStatus` prop for the user.
+     * The raw values behind the `searchStatus` prop for the user.
      *
      * @return array{
      *     runState: string,
-     *     lastRunId: int|null,
-     *     lastRunFinishedAt: string|null,
-     *     lastRunPostsStored: int|null,
-     *     lastRunOutcome: string|null,
-     *     nextRunAt: string|null,
-     *     pausedUntil: string|null,
-     *     manualRunBlockedReason: string|null,
-     *     manualRunAvailableAt: string|null
+     *     lastRun: ThreadsSearchRun|null,
+     *     nextRunAt: CarbonInterface|null,
+     *     pausedUntil: CarbonInterface|null,
+     *     block: array{reason: string|null, availableAt: CarbonInterface|null, pausedUntil: CarbonInterface|null}
      * }
      */
-    public function for(User $user): array
+    public function snapshot(User $user): array
     {
         $activeRun = $user->threadsSearchRuns()->active()->latest('id')->first();
         $lastRun = $user->threadsSearchRuns()
@@ -45,14 +42,10 @@ class SearchStatus
                 $activeRun->isQueued() => 'queued',
                 default => 'running',
             },
-            'lastRunId' => $lastRun?->id,
-            'lastRunFinishedAt' => $lastRun?->finished_at?->toIso8601String(),
-            'lastRunPostsStored' => $lastRun?->posts_stored,
-            'lastRunOutcome' => $lastRun?->outcome?->value,
-            'nextRunAt' => $this->nextRunAt($user, $pausedUntil)?->toIso8601String(),
-            'pausedUntil' => $pausedUntil?->toIso8601String(),
-            'manualRunBlockedReason' => $block['reason'],
-            'manualRunAvailableAt' => $block['availableAt']?->toIso8601String(),
+            'lastRun' => $lastRun,
+            'nextRunAt' => $this->nextRunAt($user, $pausedUntil),
+            'pausedUntil' => $pausedUntil,
+            'block' => $block,
         ];
     }
 

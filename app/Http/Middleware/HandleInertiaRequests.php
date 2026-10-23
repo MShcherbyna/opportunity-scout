@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Resources\ThreadsConnectionSummaryResource;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -49,20 +50,12 @@ class HandleInertiaRequests extends Middleware
     /**
      * The signed-in user's Threads connection summary for the disconnected banner.
      *
-     * @return array{status: string, disconnectReason: string|null, username: string}|null
+     * @return array<string, mixed>|null
      */
     private function threadsConnectionFor(Request $request): ?array
     {
         $connection = $request->user()?->threadsConnection()->first();
 
-        if ($connection === null) {
-            return null;
-        }
-
-        return [
-            'status' => $connection->status->value,
-            'disconnectReason' => $connection->disconnect_reason?->value,
-            'username' => $connection->username,
-        ];
+        return $connection === null ? null : (new ThreadsConnectionSummaryResource($connection))->resolve($request);
     }
 }

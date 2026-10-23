@@ -23,6 +23,8 @@ class DisconnectThreadsAccountsForMeta
             Log::warning('Threads uninstall callback matched no connection.', ['threads_user_id' => $threadsUserId]);
         }
 
+        Log::info('Threads uninstall callback processed.', ['user_id' => $threadsUserId, 'matched_connections' => $matched]);
+
         return $matched;
     }
 }

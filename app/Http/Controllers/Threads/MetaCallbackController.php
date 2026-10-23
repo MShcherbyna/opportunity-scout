@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Threads;
 use App\Actions\Threads\DeleteThreadsDataForMeta;
 use App\Actions\Threads\DisconnectThreadsAccountsForMeta;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\DataDeletionConfirmationResource;
 use App\Services\Threads\InvalidSignedRequest;
 use App\Services\Threads\SignedRequestParser;
 use Illuminate\Http\JsonResponse;
@@ -25,9 +26,7 @@ class MetaCallbackController extends Controller
             return $this->reject($exception);
         }
 
-        $matched = $disconnectAccounts->handle($threadsUserId);
-
-        Log::info('Threads uninstall callback processed.', ['user_id' => $threadsUserId, 'matched_connections' => $matched]);
+        $disconnectAccounts->handle($threadsUserId);
 
         return response('', 200);
     }
@@ -45,10 +44,7 @@ class MetaCallbackController extends Controller
 
         $deletionRequest = $deleteData->handle($threadsUserId);
 
-        return response()->json([
-            'url' => url('/data-deletion').'?code='.$deletionRequest->confirmation_code,
-            'confirmation_code' => $deletionRequest->confirmation_code,
-        ]);
+        return response()->json((new DataDeletionConfirmationResource($deletionRequest))->resolve($request));
     }
 
     private function signedRequestFrom(Request $request): ?string

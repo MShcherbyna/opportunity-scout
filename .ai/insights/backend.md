@@ -25,6 +25,31 @@ Evidence: `.env` (`DB_CONNECTION`, `SESSION_DRIVER`), `docker-compose.yml`
 
 ## Codebase Patterns
 
+### 2026-10-23
+
+Thin controllers, the approach used for the Threads feature (refactor plan
+`2026-10-23-1204-thin-threads-controllers`). This is a draft for CLAUDE.md:
+
+- A controller only reads the request (FormRequest accessors such as
+  `$request->filters()`), makes one call per prop or operation, flashes, and
+  returns. A one-line DB read (`->count()`, `config()`) may stay inline.
+- Workflows that change state are Actions in `App\Actions\Threads`, named with
+  a verb and exposing `handle()`. Reads and calculations are Services in
+  `App\Services\Threads`. An Action may depend on a Service, but a Service must
+  never depend on an Action (review finding AR-1).
+- Every prop or JSON shape, including scalar arrays, comes from an
+  `App\Http\Resources\*Resource` with an explicit field whitelist and no
+  `parent::toArray()`. Always call `->resolve($request)` on it, because an
+  unresolved resource sent through Inertia or `response()->json()` gets
+  wrapped in `{data: ...}` and a fresh model returns 201. A paginated page uses
+  a `JsonResource` over the paginator, not a `ResourceCollection`, which would
+  add `links`/`meta`.
+- Toast text and type come from outcome enums (`toastType()`,
+  `toastMessage()`/`toast()`), so the controller flashes in a single call.
+- Keep Dashboard and Posts props as closures, so partial reloads work.
+  Evidence: `app/Http/Controllers/Threads/*`, `app/Actions/Threads/CompleteThreadsAuthorization.php`,
+  `app/Http/Resources/ThreadsPostPageResource.php`, `app/Enums/ManualSearchRunOutcome.php`
+
 ## Tool & Library Notes
 
 ### 2026-09-18
@@ -88,6 +113,46 @@ tables (`|---|` → `| --- |` with aligned columns). A script that edits those
 files by matching the exact separator row then silently does nothing, so
 match the table header with a regex, or re-read the file after a format run.
 Evidence: `.ai/docs/runs/2026-10-23-0034--threads-connection-and-keyword-search.md`
+
+### 2026-10-23
+
+`JsonResource::resolve()` is declared `@return array`, so the precise PHPStan
+array shape of a resource's `toArray()` never reaches the caller. Declare the
+exact shape on `toArray()` and type the resolved value (e.g. a shared Inertia
+prop helper) as `array<string, mixed>|null`; forcing the shape at the call site
+needs an unchecked `@var`.
+Evidence: `vendor/laravel/framework/src/Illuminate/Http/Resources/Json/JsonResource.php:114-120`;
+`app/Http/Middleware/HandleInertiaRequests.php` (`threadsConnectionFor()`)
+
+### 2026-10-23
+
+Larastan level 7 infers `$query->pluck('col')->all()` as `array<mixed>`, so
+returning it as `list<string>` fails. Map through a typed closure and
+reindex — `array_values($q->pluck('keyword')->map(fn (mixed $k): string => $k)->all())`
+— instead of adding an ignore. Also, `SomeBackedEnum::tryFrom(null)` is a
+Larastan error (and a PHP 8.1+ deprecation, because the built-in parameter is
+non-nullable), so check for null before calling `tryFrom()`.
+Evidence: `app/Services/Threads/PostListing.php` (`keywordOptions()`),
+`app/Enums/ManualSearchRunOutcome.php` (`fromResult()`)
+
+### 2026-10-23
+
+These run-plan agent guard limits are not obvious from the error text (they add to
+the 2026-10-21 guard entry):
+
+- The implementer guard rejects any Bash command that both writes (heredoc or
+  python) and mentions `tests/`, even as a test-runner argument, so run
+  `.claude/scripts/run-tests.sh tests/...` as its own call.
+- The test-writer guard blocks `rm`, so it cannot rename or delete a test file.
+  The orchestrator has to get the user's OK for the deletion.
+- The check-runner guard rejects `$(...)` command substitution.
+- The plan-verifier guard blocks `git ls-tree`/`git hash-object` and treats
+  `->` in a grep pattern as output redirection.
+- Passing `bootstrap` as a Pint path pulls in the gitignored
+  `bootstrap/cache/*.php` and makes `pint --test` fail, so use
+  `vendor/bin/pint --test --dirty`.
+  Evidence: `.claude/hooks/implementer-bash-guard.sh`, `.claude/hooks/readonly-bash-guard.sh`;
+  `.ai/docs/runs/2026-10-23-1204-thin-threads-controllers.md` (log)
 
 ## Recurring Errors & Fixes
 

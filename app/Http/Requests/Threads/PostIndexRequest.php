@@ -27,4 +27,38 @@ class PostIndexRequest extends FormRequest
             'page' => ['nullable', 'integer', 'min:1', 'max:1000000'],
         ];
     }
+
+    /**
+     * The search term, or an empty string when none was given.
+     */
+    public function search(): string
+    {
+        return (string) ($this->validated('search') ?? '');
+    }
+
+    /**
+     * The keyword filter, or null when none was given.
+     */
+    public function keyword(): ?string
+    {
+        return $this->validated('keyword');
+    }
+
+    /**
+     * The requested page, 1 when none was given.
+     */
+    public function page(): int
+    {
+        return (int) ($this->validated('page') ?? 1);
+    }
+
+    /**
+     * The filters echoed back to the page.
+     *
+     * @return array{search: string, keyword: string|null}
+     */
+    public function filters(): array
+    {
+        return ['search' => $this->search(), 'keyword' => $this->keyword()];
+    }
 }
