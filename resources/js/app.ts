@@ -5,6 +5,7 @@ import AuthLayout from '@/layouts/AuthLayout.vue';
 import LegalLayout from '@/layouts/LegalLayout.vue';
 import AccountLayout from '@/layouts/account/Layout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
+import { initializeTimezoneCookie } from '@/lib/timezoneCookie';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -34,3 +35,6 @@ initializeTheme();
 
 // This will listen for flash toast data from the server...
 initializeFlashToast();
+
+// This will write the browser's IANA time zone to the `timezone` cookie...
+initializeTimezoneCookie();

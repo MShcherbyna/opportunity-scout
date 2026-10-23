@@ -2,6 +2,11 @@
 import { Head } from '@inertiajs/vue3';
 import ScoutSettingsTabs from '@/components/settings/ScoutSettingsTabs.vue';
 import ThreadsConnectionCard from '@/components/settings/ThreadsConnectionCard.vue';
+import type { ThreadsConnectionDetails } from '@/types';
+
+defineProps<{
+    connection: ThreadsConnectionDetails | null;
+}>();
 
 defineOptions({
     layout: {
@@ -16,6 +21,6 @@ defineOptions({
 
     <div class="flex flex-1 flex-col gap-4 p-4 md:p-6">
         <ScoutSettingsTabs />
-        <ThreadsConnectionCard />
+        <ThreadsConnectionCard :connection="connection" />
     </div>
 </template>

@@ -1,31 +1,42 @@
 import type { ComputedRef, Ref } from 'vue';
 import { computed, ref } from 'vue';
-import { generateActivity, mockDashboardStats } from '@/data/dashboard';
-import { mockPosts } from '@/data/posts';
-import type { ActivityPoint, DashboardStats } from '@/types';
+import { mockRelevantPosts, mockRelevantSeries } from '@/data/dashboard';
+import type { ActivityPoint, FoundActivityPoint } from '@/types';
 
 export type ActivityPeriod = '7' | '30';
 
 export type UseDashboardStatsReturn = {
-    stats: DashboardStats;
     period: Ref<ActivityPeriod>;
     activity: ComputedRef<ActivityPoint[]>;
-    latestRelevantCount: ComputedRef<number>;
+    relevantPosts: { value: number; change: string };
 };
 
-export function useDashboardStats(): UseDashboardStatsReturn {
+function formatDateLabel(date: string): string {
+    const [year, month, day] = date.split('-').map(Number);
+
+    return new Date(year, month - 1, day).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+    });
+}
+
+/** Merges the real found-per-day series with the mock relevant series. */
+export function useDashboardStats(
+    found: () => FoundActivityPoint[],
+): UseDashboardStatsReturn {
     const period = ref<ActivityPeriod>('7');
 
-    const activity = computed(() => generateActivity(Number(period.value)));
+    const activity = computed<ActivityPoint[]>(() => {
+        const days = Number(period.value);
+        const slice = found().slice(-days);
+        const relevant = mockRelevantSeries(slice.length);
 
-    const latestRelevantCount = computed(
-        () => mockPosts.filter((post) => post.status === 'relevant').length,
-    );
+        return slice.map((point, index) => ({
+            label: formatDateLabel(point.date),
+            found: point.found,
+            relevant: relevant[index],
+        }));
+    });
 
-    return {
-        stats: mockDashboardStats,
-        period,
-        activity,
-        latestRelevantCount,
-    };
+    return { period, activity, relevantPosts: mockRelevantPosts };
 }

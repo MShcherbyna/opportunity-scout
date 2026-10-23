@@ -5,6 +5,7 @@ import ActivityChart from '@/components/ActivityChart.vue';
 import MetricCard from '@/components/MetricCard.vue';
 import PostsTable from '@/components/posts/PostsTable.vue';
 import RunScoutButton from '@/components/RunScoutButton.vue';
+import ThreadsQuotaCard from '@/components/ThreadsQuotaCard.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,9 +18,24 @@ import {
 import { useAiSettings } from '@/composables/useAiSettings';
 import type { ActivityPeriod } from '@/composables/useDashboardStats';
 import { useDashboardStats } from '@/composables/useDashboardStats';
-import { usePosts } from '@/composables/usePosts';
+import { useSearchRunPolling } from '@/composables/useSearchRunPolling';
 import postsRoutes from '@/routes/posts';
 import { aiFiltering } from '@/routes/settings';
+import type {
+    DashboardThreadsStats,
+    FoundActivityPoint,
+    SearchStatus,
+    ThreadsPost,
+    ThreadsQuota,
+} from '@/types';
+
+const props = defineProps<{
+    threadsQuota: ThreadsQuota;
+    stats: DashboardThreadsStats;
+    activity: FoundActivityPoint[];
+    latestPosts: ThreadsPost[];
+    searchStatus: SearchStatus;
+}>();
 
 defineOptions({
     layout: {
@@ -28,7 +44,9 @@ defineOptions({
     },
 });
 
-const { stats, period, activity } = useDashboardStats();
+const { period, activity, relevantPosts } = useDashboardStats(
+    () => props.activity,
+);
 const { settings: aiSettings } = useAiSettings();
 
 const periodOptions: { value: ActivityPeriod; label: string }[] = [
@@ -36,10 +54,7 @@ const periodOptions: { value: ActivityPeriod; label: string }[] = [
     { value: '30', label: 'Last 30 days' },
 ];
 
-const { posts, isLoading } = usePosts({
-    perPage: 5,
-    initialStatusFilter: 'relevant',
-});
+useSearchRunPolling(() => props.searchStatus, ['searchStatus', 'latestPosts']);
 </script>
 
 <template>
@@ -70,7 +85,7 @@ const { posts, isLoading } = usePosts({
                 </p>
             </div>
             <div class="flex items-center gap-2">
-                <RunScoutButton />
+                <RunScoutButton :search-status="searchStatus" />
                 <Select
                     :model-value="period"
                     @update:model-value="period = $event as ActivityPeriod"
@@ -95,23 +110,24 @@ const { posts, isLoading } = usePosts({
             <MetricCard
                 :icon="Inbox"
                 label="Posts collected"
-                :value="stats.postsCollected.value.toLocaleString()"
-                :change="stats.postsCollected.change"
+                :value="stats.postsFound.toLocaleString()"
+                :change="`+${stats.foundLast7Days.toLocaleString()} in the last 7 days`"
                 positive
             />
             <MetricCard
                 :icon="Target"
                 label="Relevant posts"
-                :value="stats.relevantPosts.value.toLocaleString()"
-                :change="stats.relevantPosts.change"
+                :value="relevantPosts.value.toLocaleString()"
+                :change="relevantPosts.change"
             />
             <MetricCard
                 :icon="CalendarDays"
                 label="New today"
-                :value="stats.newToday.value.toLocaleString()"
-                :change="stats.newToday.change"
+                :value="stats.foundToday.toLocaleString()"
             />
         </div>
+
+        <ThreadsQuotaCard :quota="threadsQuota" />
 
         <div class="border-border bg-card rounded-lg border p-4">
             <div class="flex items-center justify-between">
@@ -123,7 +139,7 @@ const { posts, isLoading } = usePosts({
                         <span
                             class="bg-muted-foreground/40 size-2 rounded-sm"
                         />
-                        Collected posts
+                        Found posts
                     </span>
                     <span class="flex items-center gap-1.5">
                         <span class="bg-primary/80 size-2 rounded-sm" />
@@ -135,7 +151,7 @@ const { posts, isLoading } = usePosts({
         </div>
 
         <div class="flex items-center justify-between">
-            <h2 class="text-sm font-semibold">Latest relevant posts</h2>
+            <h2 class="text-sm font-semibold">Latest posts</h2>
             <Link
                 :href="postsRoutes.index()"
                 class="text-primary text-xs font-medium hover:underline"
@@ -145,11 +161,7 @@ const { posts, isLoading } = usePosts({
         </div>
 
         <div class="border-border bg-card rounded-lg border">
-            <PostsTable
-                :posts="posts"
-                :is-loading="isLoading"
-                variant="dashboard"
-            />
+            <PostsTable :posts="latestPosts" variant="dashboard" />
         </div>
     </div>
 </template>

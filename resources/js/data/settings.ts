@@ -1,18 +1,4 @@
-import type {
-    AiSettings,
-    ScrapingSettings,
-    TelegramSettings,
-    ThreadsAccount,
-} from '@/types';
-
-export const defaultScrapingSettings: ScrapingSettings = {
-    checkFrequency: '15',
-    postsPerRun: 100,
-    keywords: ['php', 'laravel', 'vue', 'backend', 'remote'],
-    regions: 'Europe, Ukraine, English',
-    suggestedResponseTemplate:
-        "Hi! I saw your post about {{position}}. I'm a PHP/Vue developer and would be interested in discussing the project.",
-};
+import type { AiSettings, TelegramSettings } from '@/types';
 
 export const defaultAiSettings: AiSettings = {
     provider: 'openrouter',
@@ -28,12 +14,4 @@ export const defaultTelegramSettings: TelegramSettings = {
     chatId: '',
     minimumRelevance: 75,
     delivery: 'immediately',
-};
-
-// Stand-in for the account returned by the Threads OAuth callback.
-export const mockThreadsAccount: ThreadsAccount = {
-    username: 'maksym.dev',
-    displayName: 'Maksym Shcherbyna',
-    connectedAt: '2026-09-19T10:00:00Z',
-    tokenExpiresAt: '2026-11-18T10:00:00Z',
 };
