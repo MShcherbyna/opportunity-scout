@@ -19,7 +19,10 @@ return new class extends Migration
             $table->text('text')->nullable();
             $table->string('permalink', 2048)->nullable();
             $table->string('username');
-            $table->string('keyword', 100)->collation('utf8mb4_bin');
+            $keyword = $table->string('keyword', 100);
+            if (in_array(Schema::getConnection()->getDriverName(), ['mysql', 'mariadb'], true)) {
+                $keyword->collation('utf8mb4_bin');
+            }
             $table->timestamp('posted_at');
             $table->timestamps();
 

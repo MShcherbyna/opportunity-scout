@@ -14,7 +14,10 @@ return new class extends Migration
         Schema::create('threads_keywords', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('keyword', 100)->collation('utf8mb4_bin');
+            $keyword = $table->string('keyword', 100);
+            if (in_array(Schema::getConnection()->getDriverName(), ['mysql', 'mariadb'], true)) {
+                $keyword->collation('utf8mb4_bin');
+            }
             $table->timestamp('search_window_start');
             $table->timestamp('last_searched_at')->nullable();
             $table->unsignedInteger('last_result_count')->nullable();
