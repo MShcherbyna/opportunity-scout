@@ -9,23 +9,15 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import type { PostSortOption, PostStatusFilter } from '@/composables/usePosts';
 
-const status = defineModel<PostStatusFilter>('status', { required: true });
-const sort = defineModel<PostSortOption>('sort', { required: true });
+const ALL_KEYWORDS = '__all__';
+
 const search = defineModel<string>('search', { required: true });
+const keyword = defineModel<string | null>('keyword', { required: true });
 
-const statusOptions: { value: PostStatusFilter; label: string }[] = [
-    { value: 'all', label: 'All relevance' },
-    { value: 'relevant', label: 'Relevant' },
-    { value: 'maybe', label: 'Maybe' },
-    { value: 'rejected', label: 'Rejected' },
-];
-
-const sortOptions: { value: PostSortOption; label: string }[] = [
-    { value: 'newest', label: 'Newest first' },
-    { value: 'score', label: 'Highest score' },
-];
+defineProps<{
+    keywordOptions: string[];
+}>();
 </script>
 
 <template>
@@ -39,47 +31,42 @@ const sortOptions: { value: PostSortOption; label: string }[] = [
                 id="posts-search"
                 :model-value="search"
                 type="search"
+                maxlength="100"
                 placeholder="Search…"
                 class="pl-8"
                 @update:model-value="search = String($event)"
             />
         </div>
 
-        <Label for="posts-status" class="sr-only">Relevance</Label>
+        <Label for="posts-keyword" class="sr-only">Keyword</Label>
         <Select
-            :model-value="status"
-            @update:model-value="status = $event as PostStatusFilter"
+            :model-value="keyword ?? ALL_KEYWORDS"
+            @update:model-value="
+                keyword = $event === ALL_KEYWORDS ? null : String($event)
+            "
         >
-            <SelectTrigger id="posts-status" class="w-full sm:w-40">
+            <SelectTrigger id="posts-keyword" class="w-full sm:w-40">
                 <SelectValue />
             </SelectTrigger>
             <SelectContent>
+                <SelectItem :value="ALL_KEYWORDS">All keywords</SelectItem>
                 <SelectItem
-                    v-for="option in statusOptions"
-                    :key="option.value"
-                    :value="option.value"
+                    v-for="option in keywordOptions"
+                    :key="option"
+                    :value="option"
                 >
-                    {{ option.label }}
+                    {{ option }}
                 </SelectItem>
             </SelectContent>
         </Select>
 
         <Label for="posts-sort" class="sr-only">Sort</Label>
-        <Select
-            :model-value="sort"
-            @update:model-value="sort = $event as PostSortOption"
-        >
+        <Select model-value="newest">
             <SelectTrigger id="posts-sort" class="w-full sm:w-44">
                 <SelectValue />
             </SelectTrigger>
             <SelectContent>
-                <SelectItem
-                    v-for="option in sortOptions"
-                    :key="option.value"
-                    :value="option.value"
-                >
-                    {{ option.label }}
-                </SelectItem>
+                <SelectItem value="newest">Newest first</SelectItem>
             </SelectContent>
         </Select>
     </div>
