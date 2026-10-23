@@ -3,7 +3,7 @@
 - Created: 2026-10-22 20:09
 - Status: draft
 - Request: Describe the overall concept of the Threads integration and keyword search without technical details: whether each user connects their own account, how limits work, the user journey.
-- Related: [Preparation plan](2026-10-22-1956--threads-api-preparation.md)
+- Related: [Preparation plan](2026-10-22-1956-threads-api-preparation.md)
 
 ## 1. Each user connects their own Threads account
 
