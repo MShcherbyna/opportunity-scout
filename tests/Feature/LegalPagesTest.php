@@ -18,6 +18,10 @@ class LegalPagesTest extends TestCase
     {
         $this->get(route('data-deletion'))
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->component('legal/DataDeletion'));
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('legal/DataDeletion')
+                ->where('deletionRequest', null)
+                ->where('codeNotFound', false)
+            );
     }
 }

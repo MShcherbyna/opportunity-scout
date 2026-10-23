@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Resources\ThreadsConnectionSummaryResource;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -41,7 +42,20 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'threadsConnection' => fn () => $this->threadsConnectionFor($request),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
+    }
+
+    /**
+     * The signed-in user's Threads connection summary for the disconnected banner.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function threadsConnectionFor(Request $request): ?array
+    {
+        $connection = $request->user()?->threadsConnection()->first();
+
+        return $connection === null ? null : (new ThreadsConnectionSummaryResource($connection))->resolve($request);
     }
 }
