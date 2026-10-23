@@ -1,0 +1,2332 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-density="regular">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Opportunity Scout — Design Canvas</title>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            html,
+            body {
+                margin: 0;
+                font-family:
+                    Inter,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    'Segoe UI',
+                    sans-serif;
+            }
+            html[data-theme='dark'] {
+                --bg: #0d1117;
+                --surface: #161b22;
+                --elev: #21262d;
+                --border: #30363d;
+                --text: #e6edf3;
+                --muted: #8b949e;
+                --accent: #3b82f6;
+            }
+            html[data-theme='light'] {
+                --bg: #fff;
+                --surface: #f6f8fa;
+                --elev: #fff;
+                --border: #d0d7de;
+                --text: #1f2328;
+                --muted: #656d76;
+                --accent: #0969da;
+            }
+            body {
+                background: #090c10;
+                color: var(--text);
+            }
+            .canvas {
+                padding: 38px 330px 90px 44px;
+                min-width: 1100px;
+            }
+            .section {
+                margin-bottom: 58px;
+            }
+            .section h2 {
+                margin: 0 0 5px;
+                font-size: 18px;
+            }
+            .sub {
+                color: #7d8590;
+                font-size: 12px;
+                margin-bottom: 18px;
+            }
+            .artboard-wrap {
+                margin: 0 0 32px;
+            }
+            .label {
+                font-size: 12px;
+                color: #8b949e;
+                margin: 0 0 8px 2px;
+            }
+            .artboard {
+                width: 1180px;
+                min-height: 720px;
+                background: var(--bg);
+                border: 1px solid #30363d;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 10px 35px rgba(0, 0, 0, 0.28);
+            }
+            .authboard {
+                width: 1180px;
+                height: 760px;
+            }
+            .app {
+                display: grid;
+                grid-template-columns: 190px 1fr;
+                min-height: 720px;
+                background: var(--bg);
+            }
+            .side {
+                background: var(--surface);
+                border-right: 1px solid var(--border);
+                padding: 14px 12px;
+            }
+            .brand {
+                display: flex;
+                align-items: center;
+                gap: 9px;
+                font-weight: 700;
+                padding: 4px 7px 18px;
+            }
+            .mark {
+                width: 28px;
+                height: 28px;
+                border: 1px solid var(--border);
+                border-radius: 7px;
+                display: grid;
+                place-items: center;
+                font-size: 10px;
+            }
+            .nav {
+                padding: 9px 10px;
+                border-radius: 6px;
+                color: var(--muted);
+                font-size: 12px;
+                margin: 3px 0;
+            }
+            .nav.on {
+                background: var(--elev);
+                color: var(--text);
+                font-weight: 600;
+            }
+            .top {
+                height: 58px;
+                border-bottom: 1px solid var(--border);
+                background: var(--surface);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 18px;
+            }
+            .ttl {
+                font-size: 14px;
+                font-weight: 700;
+            }
+            .tiny {
+                font-size: 10px;
+                color: var(--muted);
+                margin-top: 2px;
+            }
+            .acct {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 11px;
+            }
+            .avatar {
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                border: 1px solid var(--border);
+                display: grid;
+                place-items: center;
+                font-weight: 700;
+            }
+            .content {
+                padding: 18px;
+            }
+            .grid3 {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            .grid2 {
+                display: grid;
+                grid-template-columns: 1.5fr 0.7fr;
+                gap: 10px;
+            }
+            .card {
+                background: var(--elev);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 14px;
+            }
+            .metric {
+                font-size: 25px;
+                font-weight: 750;
+                margin: 5px 0;
+            }
+            .ct {
+                font-size: 12.5px;
+                font-weight: 700;
+            }
+            .chip {
+                display: inline-flex;
+                border: 1px solid var(--border);
+                border-radius: 999px;
+                padding: 3px 7px;
+                font-size: 10px;
+                color: var(--muted);
+                margin: 3px;
+            }
+            .chip.good {
+                color: var(--accent);
+            }
+            .chart {
+                height: 150px;
+                display: flex;
+                align-items: flex-end;
+                gap: 7px;
+                border-bottom: 1px solid var(--border);
+                padding: 15px 5px 0;
+            }
+            .pair {
+                height: 100%;
+                flex: 1;
+                display: flex;
+                gap: 3px;
+                align-items: flex-end;
+            }
+            .bar {
+                width: 55%;
+                background: var(--muted);
+                opacity: 0.35;
+                border-radius: 3px 3px 0 0;
+            }
+            .bar2 {
+                width: 45%;
+                background: var(--accent);
+                opacity: 0.8;
+                border-radius: 3px 3px 0 0;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 11px;
+            }
+            th,
+            td {
+                padding: 10px 11px;
+                border-bottom: 1px solid var(--border);
+                text-align: left;
+                vertical-align: middle;
+            }
+            th {
+                font-size: 9px;
+                color: var(--muted);
+            }
+            .btn {
+                border: 1px solid var(--border);
+                background: var(--surface);
+                color: var(--text);
+                border-radius: 6px;
+                padding: 7px 10px;
+                font-size: 10.5px;
+            }
+            .btn.primary {
+                background: var(--accent);
+                border-color: var(--accent);
+                color: #fff;
+            }
+            .detail-toolbar {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 12px;
+            }
+            .backbtn {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+            }
+            .relevant-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+            }
+            .relevant-btn.active {
+                border-color: var(--accent);
+                color: #fff !important;
+                background: var(--accent);
+            }
+            .thumb-icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                line-height: 1;
+            }
+            .thumb-svg {
+                width: 16px;
+                height: 16px;
+                display: block;
+                color: var(--text);
+            }
+            .row-like.active .thumb-svg,
+            .relevant-btn.active .thumb-svg {
+                color: #fff !important;
+            }
+            .row-like.active,
+            .relevant-btn.active {
+                color: #fff !important;
+            }
+            .row-like {
+                width: 31px;
+                height: 31px;
+                padding: 0;
+                display: inline-grid;
+                place-items: center;
+                font-size: 14px;
+                vertical-align: middle;
+            }
+            .row-like.active {
+                border-color: var(--accent);
+                color: #fff !important;
+                background: var(--accent);
+            }
+            .row-actions {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                white-space: nowrap;
+            }
+            .pagination {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px;
+            }
+            .pages {
+                display: flex;
+                gap: 4px;
+            }
+            .pg {
+                min-width: 27px;
+                height: 27px;
+                border: 1px solid var(--border);
+                background: var(--surface);
+                color: var(--text);
+                border-radius: 5px;
+            }
+            .pg.on {
+                background: var(--accent);
+                color: #fff;
+                border-color: var(--accent);
+            }
+            .settings-tabs {
+                display: flex;
+                gap: 3px;
+                border-bottom: 1px solid var(--border);
+                margin-bottom: 16px;
+            }
+            .stab {
+                padding: 8px 11px;
+                font-size: 11px;
+                color: var(--muted);
+                border-bottom: 2px solid transparent;
+            }
+            .stab.on {
+                color: var(--text);
+                border-color: var(--accent);
+                font-weight: 600;
+            }
+            .field {
+                margin-top: 13px;
+            }
+            .field label {
+                display: block;
+                font-size: 11px;
+                font-weight: 600;
+                margin-bottom: 6px;
+            }
+            input,
+            select,
+            textarea {
+                width: 100%;
+                background: var(--bg);
+                color: var(--text);
+                border: 1px solid var(--border);
+                border-radius: 6px;
+                padding: 9px 10px;
+                font: inherit;
+                font-size: 11px;
+            }
+            textarea {
+                height: 110px;
+            }
+            .form2 {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            .auth {
+                height: 100%;
+                display: grid;
+                place-items: center;
+                background: var(--bg);
+            }
+            .authbox {
+                width: 370px;
+            }
+            .center {
+                text-align: center;
+            }
+            .tweaks {
+                position: fixed;
+                right: 18px;
+                top: 18px;
+                width: 270px;
+                background: #161b22;
+                color: #e6edf3;
+                border: 1px solid #30363d;
+                border-radius: 10px;
+                padding: 14px;
+                box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+                z-index: 10;
+            }
+            .tweaks h3 {
+                margin: 0 0 14px;
+                font-size: 14px;
+            }
+            .twlabel {
+                font-size: 10px;
+                color: #8b949e;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                margin: 14px 0 7px;
+            }
+            .seg {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 5px;
+            }
+            .seg button,
+            .color {
+                border: 1px solid #30363d;
+                background: #0d1117;
+                color: #e6edf3;
+                border-radius: 6px;
+                padding: 7px;
+                font-size: 11px;
+                cursor: pointer;
+            }
+            .seg button.on {
+                border-color: #3b82f6;
+            }
+            .colors {
+                display: flex;
+                gap: 8px;
+            }
+            .color {
+                width: 28px;
+                height: 28px;
+                padding: 0;
+                border-radius: 50%;
+            }
+            .empty {
+                height: 500px;
+                display: grid;
+                place-items: center;
+                text-align: center;
+            }
+            .sk {
+                height: 10px;
+                background: var(--border);
+                border-radius: 99px;
+                opacity: 0.7;
+            }
+            .dashboard-head {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 14px;
+            }
+            .dashboard-head h1 {
+                font-size: 20px;
+                margin: 0 0 4px;
+            }
+            .period {
+                width: auto !important;
+                min-width: 105px;
+                max-width: 120px;
+                display: inline-block;
+                padding: 7px 28px 7px 10px;
+            }
+            .metric-compact {
+                display: flex;
+                gap: 11px;
+                align-items: flex-start;
+            }
+            .metric-icon {
+                width: 34px;
+                height: 34px;
+                border-radius: 7px;
+                background: color-mix(in srgb, var(--accent) 12%, transparent);
+                color: var(--accent);
+                display: grid;
+                place-items: center;
+                font-size: 16px;
+            }
+            .metric-compact .metric {
+                font-size: 21px;
+                margin: 4px 0;
+            }
+            .section-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin: 16px 0 8px;
+            }
+            .view-all {
+                color: var(--accent);
+                font-size: 10.5px;
+            }
+            .avatar-mini {
+                width: 27px;
+                height: 27px;
+                border-radius: 50%;
+                background: var(--surface);
+                border: 1px solid var(--border);
+                display: grid;
+                place-items: center;
+                font-size: 9px;
+            }
+            .post-title {
+                font-weight: 650;
+            }
+            .post-sub {
+                font-size: 9.5px;
+                color: var(--muted);
+                margin-top: 2px;
+            }
+            .score-good {
+                display: inline-flex;
+                padding: 3px 7px;
+                border-radius: 999px;
+                background: rgba(46, 160, 67, 0.18);
+                color: #3fb950;
+                font-size: 9.5px;
+                font-weight: 700;
+            }
+            .icon-btn {
+                width: 29px;
+                height: 29px;
+                padding: 0;
+                display: inline-grid;
+                place-items: center;
+            }
+            @media (max-width: 900px) {
+                .canvas {
+                    padding-right: 44px;
+                }
+                .tweaks {
+                    position: static;
+                    width: auto;
+                    margin: 18px;
+                }
+                .artboard {
+                    width: 100%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <aside class="tweaks">
+            <h3>Opportunity Scout · Tweaks</h3>
+            <div class="twlabel">Theme</div>
+            <div class="seg">
+                <button id="dark" class="on">Dark</button
+                ><button id="light">Light</button>
+            </div>
+            <div class="twlabel">Accent</div>
+            <div class="colors">
+                <button
+                    class="color"
+                    data-c="#3b82f6"
+                    style="background: #3b82f6"
+                ></button
+                ><button
+                    class="color"
+                    data-c="#8b5cf6"
+                    style="background: #8b5cf6"
+                ></button
+                ><button
+                    class="color"
+                    data-c="#10b981"
+                    style="background: #10b981"
+                ></button
+                ><button
+                    class="color"
+                    data-c="#f59e0b"
+                    style="background: #f59e0b"
+                ></button>
+            </div>
+            <div class="twlabel">Structure</div>
+            <div style="font-size: 11px; color: #8b949e; line-height: 1.6">
+                Each screen below is a separate artboard, matching the structure
+                of the reference design canvas.
+            </div>
+        </aside>
+
+        <main class="canvas">
+            <section class="section">
+                <h2>Authentication</h2>
+                <div class="sub">
+                    Entry screens · standalone before the application shell
+                </div>
+                <div class="artboard-wrap">
+                    <div class="label">Login · 1180 × 760</div>
+                    <div class="artboard authboard">
+                        <div class="auth">
+                            <div class="authbox">
+                                <div class="center">
+                                    <div class="mark" style="margin: auto">
+                                        OS
+                                    </div>
+                                    <h2>Sign in to Opportunity Scout</h2>
+                                    <div class="tiny">
+                                        Monitor useful opportunities on Threads
+                                    </div>
+                                </div>
+                                <div class="card" style="margin-top: 18px">
+                                    <div class="field">
+                                        <label>Email</label
+                                        ><input placeholder="you@example.com" />
+                                    </div>
+                                    <div class="field">
+                                        <label>Password</label
+                                        ><input
+                                            type="password"
+                                            placeholder="••••••••"
+                                        />
+                                    </div>
+                                    <button
+                                        class="btn primary"
+                                        style="width: 100%; margin-top: 16px"
+                                    >
+                                        Sign in
+                                    </button>
+                                    <div
+                                        class="tiny center"
+                                        style="margin-top: 14px"
+                                    >
+                                        New to Opportunity Scout? Create account
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="artboard-wrap">
+                    <div class="label">Registration · 1180 × 760</div>
+                    <div class="artboard authboard">
+                        <div class="auth">
+                            <div class="authbox">
+                                <div class="center">
+                                    <div class="mark" style="margin: auto">
+                                        OS
+                                    </div>
+                                    <h2>Create your account</h2>
+                                    <div class="tiny">
+                                        Start monitoring Threads opportunities
+                                    </div>
+                                </div>
+                                <div class="card" style="margin-top: 18px">
+                                    <div class="field">
+                                        <label>Name</label
+                                        ><input placeholder="Your name" />
+                                    </div>
+                                    <div class="field">
+                                        <label>Email</label
+                                        ><input placeholder="you@example.com" />
+                                    </div>
+                                    <div class="field">
+                                        <label>Password</label
+                                        ><input
+                                            type="password"
+                                            placeholder="••••••••"
+                                        />
+                                    </div>
+                                    <button
+                                        class="btn primary"
+                                        style="width: 100%; margin-top: 16px"
+                                    >
+                                        Create account
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Core workflow</h2>
+                <div class="sub">Dashboard · posts feed · post details</div>
+
+                <div class="artboard-wrap">
+                    <div class="label">Dashboard · compact overview</div>
+                    <div class="artboard">
+                        <div class="app">
+                            <aside class="side">
+                                <div class="brand">
+                                    <div class="mark">OS</div>
+                                    Opportunity Scout
+                                </div>
+                                <div class="nav on">Dashboard</div>
+                                <div class="nav">Posts</div>
+                                <div class="nav">Settings</div>
+                            </aside>
+                            <main>
+                                <div class="top">
+                                    <div>
+                                        <div class="ttl">Dashboard</div>
+                                        <div class="tiny">
+                                            Overview of your Threads monitoring
+                                            activity
+                                        </div>
+                                    </div>
+                                    <div class="acct">
+                                        <div class="avatar">MT</div>
+                                        <div>
+                                            <b>maks</b>
+                                            <div class="tiny">
+                                                maks@example.com
+                                            </div>
+                                        </div>
+                                        ⌄
+                                    </div>
+                                </div>
+                                <div class="content">
+                                    <div class="dashboard-head">
+                                        <div>
+                                            <h1>Dashboard</h1>
+                                            <div class="tiny">
+                                                Overview of your Threads
+                                                monitoring activity
+                                            </div>
+                                        </div>
+                                        <select class="period">
+                                            <option>Last 7 days</option>
+                                            <option>Last 30 days</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="grid3">
+                                        <div class="card metric-compact">
+                                            <div class="metric-icon">▣</div>
+                                            <div>
+                                                <div class="tiny">
+                                                    Posts collected
+                                                </div>
+                                                <div class="metric">12,482</div>
+                                                <div
+                                                    class="tiny"
+                                                    style="color: #3fb950"
+                                                >
+                                                    ↗ +842 this week
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card metric-compact">
+                                            <div class="metric-icon">◎</div>
+                                            <div>
+                                                <div class="tiny">
+                                                    Relevant posts
+                                                </div>
+                                                <div class="metric">1,936</div>
+                                                <div class="tiny">
+                                                    15.5% relevance
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card metric-compact">
+                                            <div class="metric-icon">▥</div>
+                                            <div>
+                                                <div class="tiny">
+                                                    New today
+                                                </div>
+                                                <div class="metric">128</div>
+                                                <div class="tiny">
+                                                    34 relevant
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card" style="margin-top: 10px">
+                                        <div
+                                            style="
+                                                display: flex;
+                                                justify-content: space-between;
+                                                align-items: center;
+                                            "
+                                        >
+                                            <div class="ct">
+                                                Activity overview
+                                            </div>
+                                            <div class="tiny">
+                                                ● Collected posts &nbsp;&nbsp;
+                                                <span
+                                                    style="color: var(--accent)"
+                                                    >●</span
+                                                >
+                                                Relevant posts
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="chart"
+                                            style="height: 190px"
+                                        >
+                                            <div class="pair">
+                                                <div
+                                                    class="bar"
+                                                    style="height: 58%"
+                                                ></div>
+                                                <div
+                                                    class="bar2"
+                                                    style="height: 34%"
+                                                ></div>
+                                            </div>
+                                            <div class="pair">
+                                                <div
+                                                    class="bar"
+                                                    style="height: 64%"
+                                                ></div>
+                                                <div
+                                                    class="bar2"
+                                                    style="height: 31%"
+                                                ></div>
+                                            </div>
+                                            <div class="pair">
+                                                <div
+                                                    class="bar"
+                                                    style="height: 73%"
+                                                ></div>
+                                                <div
+                                                    class="bar2"
+                                                    style="height: 35%"
+                                                ></div>
+                                            </div>
+                                            <div class="pair">
+                                                <div
+                                                    class="bar"
+                                                    style="height: 69%"
+                                                ></div>
+                                                <div
+                                                    class="bar2"
+                                                    style="height: 33%"
+                                                ></div>
+                                            </div>
+                                            <div class="pair">
+                                                <div
+                                                    class="bar"
+                                                    style="height: 74%"
+                                                ></div>
+                                                <div
+                                                    class="bar2"
+                                                    style="height: 34%"
+                                                ></div>
+                                            </div>
+                                            <div class="pair">
+                                                <div
+                                                    class="bar"
+                                                    style="height: 68%"
+                                                ></div>
+                                                <div
+                                                    class="bar2"
+                                                    style="height: 30%"
+                                                ></div>
+                                            </div>
+                                            <div class="pair">
+                                                <div
+                                                    class="bar"
+                                                    style="height: 72%"
+                                                ></div>
+                                                <div
+                                                    class="bar2"
+                                                    style="height: 35%"
+                                                ></div>
+                                            </div>
+                                        </div>
+                                        <div
+                                            style="
+                                                display: grid;
+                                                grid-template-columns: repeat(
+                                                    7,
+                                                    1fr
+                                                );
+                                                font-size: 9px;
+                                                color: var(--muted);
+                                                text-align: center;
+                                                margin-top: 6px;
+                                            "
+                                        >
+                                            <span>Sep 10</span
+                                            ><span>Sep 11</span
+                                            ><span>Sep 12</span
+                                            ><span>Sep 13</span
+                                            ><span>Sep 14</span
+                                            ><span>Sep 15</span
+                                            ><span>Sep 16</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="section-row">
+                                        <div class="ct">
+                                            Latest relevant posts
+                                        </div>
+                                        <div class="view-all">View all</div>
+                                    </div>
+                                    <div class="card" style="padding: 0">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>POST</th>
+                                                    <th>AUTHOR</th>
+                                                    <th>SCORE</th>
+                                                    <th>FOUND</th>
+                                                    <th>ACTION</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <div
+                                                            style="
+                                                                display: flex;
+                                                                gap: 8px;
+                                                                align-items: center;
+                                                            "
+                                                        >
+                                                            <div
+                                                                class="avatar-mini"
+                                                            >
+                                                                JD
+                                                            </div>
+                                                            <div>
+                                                                <div
+                                                                    class="post-title"
+                                                                >
+                                                                    Looking for
+                                                                    a Laravel
+                                                                    developer...
+                                                                </div>
+                                                                <div
+                                                                    class="post-sub"
+                                                                >
+                                                                    We're
+                                                                    building a
+                                                                    new product
+                                                                    and...
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>@jessicadev</td>
+                                                    <td>
+                                                        <span class="score-good"
+                                                            >92%</span
+                                                        >
+                                                    </td>
+                                                    <td>2h ago</td>
+                                                    <td>
+                                                        <div
+                                                            class="row-actions"
+                                                        >
+                                                            <button
+                                                                class="btn row-like"
+                                                                type="button"
+                                                                aria-pressed="false"
+                                                                title="Mark as relevant"
+                                                            >
+                                                                <svg
+                                                                    class="thumb-svg"
+                                                                    viewBox="0 0 24 24"
+                                                                    aria-hidden="true"
+                                                                >
+                                                                    <path
+                                                                        d="M7.5 21H4.75A1.75 1.75 0 0 1 3 19.25v-8.5A1.75 1.75 0 0 1 4.75 9H7.5m0 12V9l3.7-6a1.7 1.7 0 0 1 3.15 1.05L13.8 9h4.45A2.75 2.75 0 0 1 21 11.75c0 .23-.03.46-.09.68l-1.75 6.5A2.75 2.75 0 0 1 16.5 21h-9Z"
+                                                                        fill="none"
+                                                                        stroke="currentColor"
+                                                                        stroke-width="1.8"
+                                                                        stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                    />
+                                                                </svg></button
+                                                            ><button
+                                                                class="btn icon-btn"
+                                                                title="Open in Threads"
+                                                            >
+                                                                ↗
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div
+                                                            style="
+                                                                display: flex;
+                                                                gap: 8px;
+                                                                align-items: center;
+                                                            "
+                                                        >
+                                                            <div
+                                                                class="avatar-mini"
+                                                            >
+                                                                MD
+                                                            </div>
+                                                            <div>
+                                                                <div
+                                                                    class="post-title"
+                                                                >
+                                                                    Need help
+                                                                    with a Vue
+                                                                    project
+                                                                </div>
+                                                                <div
+                                                                    class="post-sub"
+                                                                >
+                                                                    Small
+                                                                    project,
+                                                                    flexible
+                                                                    budget...
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>@mark_design</td>
+                                                    <td>
+                                                        <span class="score-good"
+                                                            >88%</span
+                                                        >
+                                                    </td>
+                                                    <td>4h ago</td>
+                                                    <td>
+                                                        <div
+                                                            class="row-actions"
+                                                        >
+                                                            <button
+                                                                class="btn row-like"
+                                                                type="button"
+                                                                aria-pressed="false"
+                                                                title="Mark as relevant"
+                                                            >
+                                                                <svg
+                                                                    class="thumb-svg"
+                                                                    viewBox="0 0 24 24"
+                                                                    aria-hidden="true"
+                                                                >
+                                                                    <path
+                                                                        d="M7.5 21H4.75A1.75 1.75 0 0 1 3 19.25v-8.5A1.75 1.75 0 0 1 4.75 9H7.5m0 12V9l3.7-6a1.7 1.7 0 0 1 3.15 1.05L13.8 9h4.45A2.75 2.75 0 0 1 21 11.75c0 .23-.03.46-.09.68l-1.75 6.5A2.75 2.75 0 0 1 16.5 21h-9Z"
+                                                                        fill="none"
+                                                                        stroke="currentColor"
+                                                                        stroke-width="1.8"
+                                                                        stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                    />
+                                                                </svg></button
+                                                            ><button
+                                                                class="btn icon-btn"
+                                                            >
+                                                                ↗
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div
+                                                            style="
+                                                                display: flex;
+                                                                gap: 8px;
+                                                                align-items: center;
+                                                            "
+                                                        >
+                                                            <div
+                                                                class="avatar-mini"
+                                                            >
+                                                                RJ
+                                                            </div>
+                                                            <div>
+                                                                <div
+                                                                    class="post-title"
+                                                                >
+                                                                    Backend
+                                                                    developer
+                                                                    (remote)
+                                                                </div>
+                                                                <div
+                                                                    class="post-sub"
+                                                                >
+                                                                    We're hiring
+                                                                    a backend
+                                                                    developer...
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>@remotejobs</td>
+                                                    <td>
+                                                        <span class="score-good"
+                                                            >85%</span
+                                                        >
+                                                    </td>
+                                                    <td>6h ago</td>
+                                                    <td>
+                                                        <div
+                                                            class="row-actions"
+                                                        >
+                                                            <button
+                                                                class="btn row-like"
+                                                                type="button"
+                                                                aria-pressed="false"
+                                                                title="Mark as relevant"
+                                                            >
+                                                                <svg
+                                                                    class="thumb-svg"
+                                                                    viewBox="0 0 24 24"
+                                                                    aria-hidden="true"
+                                                                >
+                                                                    <path
+                                                                        d="M7.5 21H4.75A1.75 1.75 0 0 1 3 19.25v-8.5A1.75 1.75 0 0 1 4.75 9H7.5m0 12V9l3.7-6a1.7 1.7 0 0 1 3.15 1.05L13.8 9h4.45A2.75 2.75 0 0 1 21 11.75c0 .23-.03.46-.09.68l-1.75 6.5A2.75 2.75 0 0 1 16.5 21h-9Z"
+                                                                        fill="none"
+                                                                        stroke="currentColor"
+                                                                        stroke-width="1.8"
+                                                                        stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                    />
+                                                                </svg></button
+                                                            ><button
+                                                                class="btn icon-btn"
+                                                            >
+                                                                ↗
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div
+                                                            style="
+                                                                display: flex;
+                                                                gap: 8px;
+                                                                align-items: center;
+                                                            "
+                                                        >
+                                                            <div
+                                                                class="avatar-mini"
+                                                            >
+                                                                AP
+                                                            </div>
+                                                            <div>
+                                                                <div
+                                                                    class="post-title"
+                                                                >
+                                                                    Looking for
+                                                                    a full-stack
+                                                                    dev
+                                                                </div>
+                                                                <div
+                                                                    class="post-sub"
+                                                                >
+                                                                    Long-term
+                                                                    collaboration,
+                                                                    React + ...
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>@alex_product</td>
+                                                    <td>
+                                                        <span class="score-good"
+                                                            >82%</span
+                                                        >
+                                                    </td>
+                                                    <td>8h ago</td>
+                                                    <td>
+                                                        <div
+                                                            class="row-actions"
+                                                        >
+                                                            <button
+                                                                class="btn row-like"
+                                                                type="button"
+                                                                aria-pressed="false"
+                                                                title="Mark as relevant"
+                                                            >
+                                                                <svg
+                                                                    class="thumb-svg"
+                                                                    viewBox="0 0 24 24"
+                                                                    aria-hidden="true"
+                                                                >
+                                                                    <path
+                                                                        d="M7.5 21H4.75A1.75 1.75 0 0 1 3 19.25v-8.5A1.75 1.75 0 0 1 4.75 9H7.5m0 12V9l3.7-6a1.7 1.7 0 0 1 3.15 1.05L13.8 9h4.45A2.75 2.75 0 0 1 21 11.75c0 .23-.03.46-.09.68l-1.75 6.5A2.75 2.75 0 0 1 16.5 21h-9Z"
+                                                                        fill="none"
+                                                                        stroke="currentColor"
+                                                                        stroke-width="1.8"
+                                                                        stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                    />
+                                                                </svg></button
+                                                            ><button
+                                                                class="btn icon-btn"
+                                                            >
+                                                                ↗
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div
+                                                            style="
+                                                                display: flex;
+                                                                gap: 8px;
+                                                                align-items: center;
+                                                            "
+                                                        >
+                                                            <div
+                                                                class="avatar-mini"
+                                                            >
+                                                                ET
+                                                            </div>
+                                                            <div>
+                                                                <div
+                                                                    class="post-title"
+                                                                >
+                                                                    PHP
+                                                                    developer
+                                                                    needed
+                                                                </div>
+                                                                <div
+                                                                    class="post-sub"
+                                                                >
+                                                                    E-commerce
+                                                                    project,
+                                                                    PHP/Laravel...
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>@ecom_team</td>
+                                                    <td>
+                                                        <span class="score-good"
+                                                            >78%</span
+                                                        >
+                                                    </td>
+                                                    <td>12h ago</td>
+                                                    <td>
+                                                        <div
+                                                            class="row-actions"
+                                                        >
+                                                            <button
+                                                                class="btn row-like"
+                                                                type="button"
+                                                                aria-pressed="false"
+                                                                title="Mark as relevant"
+                                                            >
+                                                                <svg
+                                                                    class="thumb-svg"
+                                                                    viewBox="0 0 24 24"
+                                                                    aria-hidden="true"
+                                                                >
+                                                                    <path
+                                                                        d="M7.5 21H4.75A1.75 1.75 0 0 1 3 19.25v-8.5A1.75 1.75 0 0 1 4.75 9H7.5m0 12V9l3.7-6a1.7 1.7 0 0 1 3.15 1.05L13.8 9h4.45A2.75 2.75 0 0 1 21 11.75c0 .23-.03.46-.09.68l-1.75 6.5A2.75 2.75 0 0 1 16.5 21h-9Z"
+                                                                        fill="none"
+                                                                        stroke="currentColor"
+                                                                        stroke-width="1.8"
+                                                                        stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                    />
+                                                                </svg></button
+                                                            ><button
+                                                                class="btn icon-btn"
+                                                            >
+                                                                ↗
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="artboard-wrap">
+                    <div class="label">Posts · filters + pagination</div>
+                    <div class="artboard">
+                        <div class="app">
+                            <aside class="side">
+                                <div class="brand">
+                                    <div class="mark">OS</div>
+                                    Opportunity Scout
+                                </div>
+                                <div class="nav">Dashboard</div>
+                                <div class="nav on">Posts</div>
+                                <div class="nav">Settings</div>
+                            </aside>
+                            <main>
+                                <div class="top">
+                                    <div>
+                                        <div class="ttl">Posts</div>
+                                        <div class="tiny">
+                                            All collected Threads posts
+                                        </div>
+                                    </div>
+                                    <div class="acct">
+                                        <div class="avatar">MT</div>
+                                        maks ⌄
+                                    </div>
+                                </div>
+                                <div class="content">
+                                    <div class="card" style="padding: 0">
+                                        <div
+                                            style="
+                                                display: flex;
+                                                justify-content: space-between;
+                                                padding: 14px;
+                                            "
+                                        >
+                                            <div>
+                                                <div class="ct">All posts</div>
+                                                <div class="tiny">
+                                                    Filtered and scored by AI
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <button class="btn">
+                                                    All relevance ▾
+                                                </button>
+                                                <button class="btn">
+                                                    Newest first ▾
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>POST</th>
+                                                    <th>AUTHOR</th>
+                                                    <th>STATUS</th>
+                                                    <th>SCORE</th>
+                                                    <th>FOUND</th>
+                                                    <th>ACTION</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <b
+                                                            >PHP developer
+                                                            needed for API
+                                                            integrations</b
+                                                        >
+                                                        <div class="tiny">
+                                                            Remote · contract
+                                                            opportunity
+                                                        </div>
+                                                    </td>
+                                                    <td>@founder_one</td>
+                                                    <td>
+                                                        <span class="chip good"
+                                                            >Relevant</span
+                                                        >
+                                                    </td>
+                                                    <td>94%</td>
+                                                    <td>Today</td>
+                                                    <td>
+                                                        <div
+                                                            class="row-actions"
+                                                        >
+                                                            <button
+                                                                class="btn row-like"
+                                                                type="button"
+                                                                title="Mark as relevant"
+                                                                aria-label="Mark as relevant"
+                                                                aria-pressed="false"
+                                                            >
+                                                                <svg
+                                                                    class="thumb-svg"
+                                                                    viewBox="0 0 24 24"
+                                                                    aria-hidden="true"
+                                                                >
+                                                                    <path
+                                                                        d="M7.5 21H4.75A1.75 1.75 0 0 1 3 19.25v-8.5A1.75 1.75 0 0 1 4.75 9H7.5m0 12V9l3.7-6a1.7 1.7 0 0 1 3.15 1.05L13.8 9h4.45A2.75 2.75 0 0 1 21 11.75c0 .23-.03.46-.09.68l-1.75 6.5A2.75 2.75 0 0 1 16.5 21h-9Z"
+                                                                        fill="none"
+                                                                        stroke="currentColor"
+                                                                        stroke-width="1.8"
+                                                                        stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                    />
+                                                                </svg></button
+                                                            ><button
+                                                                class="btn"
+                                                            >
+                                                                Threads ↗
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b
+                                                            >Vue freelancer for
+                                                            dashboard
+                                                            redesign</b
+                                                        >
+                                                        <div class="tiny">
+                                                            Remote · contract
+                                                            opportunity
+                                                        </div>
+                                                    </td>
+                                                    <td>@productteam</td>
+                                                    <td>
+                                                        <span class="chip good"
+                                                            >Relevant</span
+                                                        >
+                                                    </td>
+                                                    <td>86%</td>
+                                                    <td>Today</td>
+                                                    <td>
+                                                        <div
+                                                            class="row-actions"
+                                                        >
+                                                            <button
+                                                                class="btn row-like"
+                                                                type="button"
+                                                                title="Mark as relevant"
+                                                                aria-label="Mark as relevant"
+                                                                aria-pressed="false"
+                                                            >
+                                                                <svg
+                                                                    class="thumb-svg"
+                                                                    viewBox="0 0 24 24"
+                                                                    aria-hidden="true"
+                                                                >
+                                                                    <path
+                                                                        d="M7.5 21H4.75A1.75 1.75 0 0 1 3 19.25v-8.5A1.75 1.75 0 0 1 4.75 9H7.5m0 12V9l3.7-6a1.7 1.7 0 0 1 3.15 1.05L13.8 9h4.45A2.75 2.75 0 0 1 21 11.75c0 .23-.03.46-.09.68l-1.75 6.5A2.75 2.75 0 0 1 16.5 21h-9Z"
+                                                                        fill="none"
+                                                                        stroke="currentColor"
+                                                                        stroke-width="1.8"
+                                                                        stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                    />
+                                                                </svg></button
+                                                            ><button
+                                                                class="btn"
+                                                            >
+                                                                Threads ↗
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b
+                                                            >Looking for senior
+                                                            frontend engineer</b
+                                                        >
+                                                        <div class="tiny">
+                                                            Remote · contract
+                                                            opportunity
+                                                        </div>
+                                                    </td>
+                                                    <td>@agency_owner</td>
+                                                    <td>
+                                                        <span class="chip good"
+                                                            >Maybe</span
+                                                        >
+                                                    </td>
+                                                    <td>61%</td>
+                                                    <td>Today</td>
+                                                    <td>
+                                                        <div
+                                                            class="row-actions"
+                                                        >
+                                                            <button
+                                                                class="btn row-like"
+                                                                type="button"
+                                                                title="Mark as relevant"
+                                                                aria-label="Mark as relevant"
+                                                                aria-pressed="false"
+                                                            >
+                                                                <svg
+                                                                    class="thumb-svg"
+                                                                    viewBox="0 0 24 24"
+                                                                    aria-hidden="true"
+                                                                >
+                                                                    <path
+                                                                        d="M7.5 21H4.75A1.75 1.75 0 0 1 3 19.25v-8.5A1.75 1.75 0 0 1 4.75 9H7.5m0 12V9l3.7-6a1.7 1.7 0 0 1 3.15 1.05L13.8 9h4.45A2.75 2.75 0 0 1 21 11.75c0 .23-.03.46-.09.68l-1.75 6.5A2.75 2.75 0 0 1 16.5 21h-9Z"
+                                                                        fill="none"
+                                                                        stroke="currentColor"
+                                                                        stroke-width="1.8"
+                                                                        stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                    />
+                                                                </svg></button
+                                                            ><button
+                                                                class="btn"
+                                                            >
+                                                                Threads ↗
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b
+                                                            >Laravel developer
+                                                            for SaaS
+                                                            maintenance</b
+                                                        >
+                                                        <div class="tiny">
+                                                            Remote · contract
+                                                            opportunity
+                                                        </div>
+                                                    </td>
+                                                    <td>@saasdaily</td>
+                                                    <td>
+                                                        <span class="chip good"
+                                                            >Relevant</span
+                                                        >
+                                                    </td>
+                                                    <td>91%</td>
+                                                    <td>Today</td>
+                                                    <td>
+                                                        <div
+                                                            class="row-actions"
+                                                        >
+                                                            <button
+                                                                class="btn row-like"
+                                                                type="button"
+                                                                title="Mark as relevant"
+                                                                aria-label="Mark as relevant"
+                                                                aria-pressed="false"
+                                                            >
+                                                                <svg
+                                                                    class="thumb-svg"
+                                                                    viewBox="0 0 24 24"
+                                                                    aria-hidden="true"
+                                                                >
+                                                                    <path
+                                                                        d="M7.5 21H4.75A1.75 1.75 0 0 1 3 19.25v-8.5A1.75 1.75 0 0 1 4.75 9H7.5m0 12V9l3.7-6a1.7 1.7 0 0 1 3.15 1.05L13.8 9h4.45A2.75 2.75 0 0 1 21 11.75c0 .23-.03.46-.09.68l-1.75 6.5A2.75 2.75 0 0 1 16.5 21h-9Z"
+                                                                        fill="none"
+                                                                        stroke="currentColor"
+                                                                        stroke-width="1.8"
+                                                                        stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                    />
+                                                                </svg></button
+                                                            ><button
+                                                                class="btn"
+                                                            >
+                                                                Threads ↗
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b
+                                                            >Backend engineer
+                                                            for marketplace</b
+                                                        >
+                                                        <div class="tiny">
+                                                            Remote · contract
+                                                            opportunity
+                                                        </div>
+                                                    </td>
+                                                    <td>@marketmaker</td>
+                                                    <td>
+                                                        <span class="chip good"
+                                                            >Relevant</span
+                                                        >
+                                                    </td>
+                                                    <td>88%</td>
+                                                    <td>Yesterday</td>
+                                                    <td>
+                                                        <div
+                                                            class="row-actions"
+                                                        >
+                                                            <button
+                                                                class="btn row-like"
+                                                                type="button"
+                                                                title="Mark as relevant"
+                                                                aria-label="Mark as relevant"
+                                                                aria-pressed="false"
+                                                            >
+                                                                <svg
+                                                                    class="thumb-svg"
+                                                                    viewBox="0 0 24 24"
+                                                                    aria-hidden="true"
+                                                                >
+                                                                    <path
+                                                                        d="M7.5 21H4.75A1.75 1.75 0 0 1 3 19.25v-8.5A1.75 1.75 0 0 1 4.75 9H7.5m0 12V9l3.7-6a1.7 1.7 0 0 1 3.15 1.05L13.8 9h4.45A2.75 2.75 0 0 1 21 11.75c0 .23-.03.46-.09.68l-1.75 6.5A2.75 2.75 0 0 1 16.5 21h-9Z"
+                                                                        fill="none"
+                                                                        stroke="currentColor"
+                                                                        stroke-width="1.8"
+                                                                        stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                    />
+                                                                </svg></button
+                                                            ><button
+                                                                class="btn"
+                                                            >
+                                                                Threads ↗
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <div class="pagination">
+                                            <span class="tiny"
+                                                >Showing 1–5 of 128</span
+                                            >
+                                            <div class="pages">
+                                                <button class="pg">‹</button
+                                                ><button class="pg on">1</button
+                                                ><button class="pg">2</button
+                                                ><button class="pg">3</button
+                                                ><button class="pg">…</button
+                                                ><button class="pg">26</button
+                                                ><button class="pg">›</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="artboard-wrap">
+                    <div class="label">Post Detail</div>
+                    <div class="artboard">
+                        <div class="app">
+                            <aside class="side">
+                                <div class="brand">
+                                    <div class="mark">OS</div>
+                                    Opportunity Scout
+                                </div>
+                                <div class="nav">Dashboard</div>
+                                <div class="nav on">Posts</div>
+                                <div class="nav">Settings</div>
+                            </aside>
+                            <main>
+                                <div class="top">
+                                    <div class="ttl">Post details</div>
+                                    <div class="acct">
+                                        <div class="avatar">MT</div>
+                                        maks ⌄
+                                    </div>
+                                </div>
+                                <div class="content">
+                                    <div class="detail-toolbar">
+                                        <button
+                                            class="btn backbtn"
+                                            type="button"
+                                        >
+                                            ← <span>Back to posts</span>
+                                        </button>
+                                        <button
+                                            class="btn relevant-btn"
+                                            type="button"
+                                            aria-pressed="false"
+                                        >
+                                            <span class="thumb-icon"
+                                                ><svg
+                                                    class="thumb-svg"
+                                                    viewBox="0 0 24 24"
+                                                    aria-hidden="true"
+                                                >
+                                                    <path
+                                                        d="M7.5 21H4.75A1.75 1.75 0 0 1 3 19.25v-8.5A1.75 1.75 0 0 1 4.75 9H7.5m0 12V9l3.7-6a1.7 1.7 0 0 1 3.15 1.05L13.8 9h4.45A2.75 2.75 0 0 1 21 11.75c0 .23-.03.46-.09.68l-1.75 6.5A2.75 2.75 0 0 1 16.5 21h-9Z"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        stroke-width="1.8"
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                    /></svg></span
+                                            ><span>Mark as relevant</span>
+                                        </button>
+                                    </div>
+                                    <div
+                                        style="
+                                            display: grid;
+                                            grid-template-columns: 1fr 300px;
+                                            gap: 12px;
+                                        "
+                                    >
+                                        <div class="card">
+                                            <span class="chip good"
+                                                >92% relevant</span
+                                            >
+                                            <h1
+                                                style="
+                                                    font-size: 20px;
+                                                    line-height: 1.35;
+                                                "
+                                            >
+                                                Looking for a PHP/Laravel
+                                                developer for a remote SaaS
+                                                project
+                                            </h1>
+                                            <div class="tiny">
+                                                @devfounder · 4 minutes ago
+                                            </div>
+                                            <p
+                                                style="
+                                                    font-size: 12px;
+                                                    line-height: 1.7;
+                                                    color: var(--muted);
+                                                    border-top: 1px solid
+                                                        var(--border);
+                                                    padding-top: 16px;
+                                                "
+                                            >
+                                                We’re looking for an experienced
+                                                PHP/Laravel developer to help
+                                                with a growing SaaS product.
+                                                Work includes API integrations,
+                                                queues, PostgreSQL and some Vue
+                                                dashboard tasks. Remote, EU
+                                                timezone preferred.
+                                            </p>
+                                            <div
+                                                class="ct"
+                                                style="margin-top: 20px"
+                                            >
+                                                Why AI marked it relevant
+                                            </div>
+                                            <ul
+                                                style="
+                                                    font-size: 11px;
+                                                    color: var(--muted);
+                                                    line-height: 1.8;
+                                                "
+                                            >
+                                                <li>
+                                                    Explicitly hiring a
+                                                    developer
+                                                </li>
+                                                <li>
+                                                    Matches PHP, Laravel and Vue
+                                                    keywords
+                                                </li>
+                                                <li>
+                                                    Remote contract-style
+                                                    opportunity
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="card">
+                                            <div class="ct">
+                                                Suggested response
+                                            </div>
+                                            <div class="tiny">
+                                                Generated from your template
+                                            </div>
+                                            <textarea style="margin-top: 12px">
+Hi! I saw your post about the Laravel SaaS project. I'm a PHP/Vue developer and would be interested in discussing the project. Could you share more details?</textarea
+                                            ><button
+                                                class="btn primary"
+                                                style="
+                                                    width: 100%;
+                                                    margin-top: 10px;
+                                                "
+                                            >
+                                                Copy response
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Settings</h2>
+                <div class="sub">Scraping · AI model filtering · Telegram</div>
+                <div class="artboard-wrap">
+                    <div class="label">Settings · Scraping</div>
+                    <div class="artboard">
+                        <div class="app">
+                            <aside class="side">
+                                <div class="brand">
+                                    <div class="mark">OS</div>
+                                    Opportunity Scout
+                                </div>
+                                <div class="nav">Dashboard</div>
+                                <div class="nav">Posts</div>
+                                <div class="nav on">Settings</div>
+                            </aside>
+                            <main>
+                                <div class="top">
+                                    <div class="ttl">Settings</div>
+                                    <div class="acct">
+                                        <div class="avatar">MT</div>
+                                        maks ⌄
+                                    </div>
+                                </div>
+                                <div class="content">
+                                    <div class="settings-tabs">
+                                        <div class="stab on">Scraping</div>
+                                        <div class="stab">AI Filtering</div>
+                                        <div class="stab">Integrations</div>
+                                    </div>
+                                    <div class="card" style="max-width: 780px">
+                                        <div class="ct">Search & scraping</div>
+                                        <div class="tiny">
+                                            Configure how Opportunity Scout
+                                            collects posts.
+                                        </div>
+                                        <div class="form2">
+                                            <div class="field">
+                                                <label>Check frequency</label
+                                                ><select>
+                                                    <option>
+                                                        Every 15 minutes
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="field">
+                                                <label>Posts per run</label
+                                                ><input value="100" />
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <label>Keywords</label
+                                            ><input
+                                                value="php, laravel, vue, backend, remote"
+                                            />
+                                        </div>
+                                        <div class="field">
+                                            <label>Regions / languages</label
+                                            ><input
+                                                value="Europe, Ukraine, English"
+                                            />
+                                        </div>
+                                        <div class="field">
+                                            <label
+                                                >Suggested response
+                                                template</label
+                                            ><textarea>
+Hi! I saw your post about {{position}}. I'm a PHP/Vue developer and would be interested in discussing the project.</textarea>
+                                        </div>
+                                        <button
+                                            class="btn primary"
+                                            style="margin-top: 14px"
+                                        >
+                                            Save settings
+                                        </button>
+                                    </div>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+                </div>
+                <div class="artboard-wrap">
+                    <div class="label">Settings · AI Filtering</div>
+                    <div class="artboard">
+                        <div class="app">
+                            <aside class="side">
+                                <div class="brand">
+                                    <div class="mark">OS</div>
+                                    Opportunity Scout
+                                </div>
+                                <div class="nav">Dashboard</div>
+                                <div class="nav">Posts</div>
+                                <div class="nav on">Settings</div>
+                            </aside>
+                            <main>
+                                <div class="top">
+                                    <div class="ttl">Settings</div>
+                                    <div class="acct">
+                                        <div class="avatar">MT</div>
+                                        maks ⌄
+                                    </div>
+                                </div>
+                                <div class="content">
+                                    <div class="settings-tabs">
+                                        <div class="stab">Scraping</div>
+                                        <div class="stab on">AI Filtering</div>
+                                        <div class="stab">Integrations</div>
+                                    </div>
+                                    <div class="card" style="max-width: 820px">
+                                        <div class="ct">AI filtering model</div>
+                                        <div class="tiny">
+                                            Connect a model that scores whether
+                                            a collected post is useful.
+                                        </div>
+                                        <div class="form2">
+                                            <div class="field">
+                                                <label>Provider</label
+                                                ><select>
+                                                    <option>OpenRouter</option>
+                                                    <option>OpenAI</option>
+                                                    <option>Anthropic</option>
+                                                    <option>
+                                                        Custom OpenAI-compatible
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="field">
+                                                <label>Model</label
+                                                ><input
+                                                    value="openai/gpt-5-mini"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <label>API key</label
+                                            ><input
+                                                type="password"
+                                                placeholder="••••••••••••••••"
+                                            />
+                                            <div class="tiny">
+                                                Stored encrypted on the backend.
+                                            </div>
+                                        </div>
+                                        <div class="field">
+                                            <label
+                                                >Relevance threshold ·
+                                                75%</label
+                                            ><input type="range" value="75" />
+                                        </div>
+                                        <div class="field">
+                                            <label>Filtering instruction</label
+                                            ><textarea>
+Approve posts where a person or company is looking for a PHP, Laravel, Vue or full-stack developer. Prioritize contract, freelance and remote work. Reject job-seeker posts, courses, spam and unrelated discussions.</textarea>
+                                        </div>
+                                        <div style="margin-top: 14px">
+                                            <button class="btn">
+                                                Test configuration
+                                            </button>
+                                            <button class="btn primary">
+                                                Save AI settings
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+                </div>
+                <div class="artboard-wrap">
+                    <div class="label">Settings · Integrations / Telegram</div>
+                    <div class="artboard">
+                        <div class="app">
+                            <aside class="side">
+                                <div class="brand">
+                                    <div class="mark">OS</div>
+                                    Opportunity Scout
+                                </div>
+                                <div class="nav">Dashboard</div>
+                                <div class="nav">Posts</div>
+                                <div class="nav on">Settings</div>
+                            </aside>
+                            <main>
+                                <div class="top">
+                                    <div class="ttl">Settings</div>
+                                    <div class="acct">
+                                        <div class="avatar">MT</div>
+                                        maks ⌄
+                                    </div>
+                                </div>
+                                <div class="content">
+                                    <div class="settings-tabs">
+                                        <div class="stab">Scraping</div>
+                                        <div class="stab">AI Filtering</div>
+                                        <div class="stab on">Integrations</div>
+                                    </div>
+                                    <div
+                                        class="grid2"
+                                        style="grid-template-columns: 1fr 1fr"
+                                    >
+                                        <div class="card">
+                                            <div class="ct">
+                                                Telegram notifications
+                                            </div>
+                                            <div class="tiny">
+                                                Push relevant opportunities to
+                                                your bot.
+                                            </div>
+                                            <div class="field">
+                                                <label>Bot token</label
+                                                ><input
+                                                    type="password"
+                                                    placeholder="••••••••••••"
+                                                />
+                                            </div>
+                                            <div class="field">
+                                                <label>Chat ID</label
+                                                ><input value="123456789" />
+                                            </div>
+                                            <button
+                                                class="btn primary"
+                                                style="margin-top: 14px"
+                                            >
+                                                Save Telegram
+                                            </button>
+                                        </div>
+                                        <div class="card">
+                                            <div class="ct">
+                                                Notification rules
+                                            </div>
+                                            <div class="field">
+                                                <label>Minimum relevance</label
+                                                ><select>
+                                                    <option>
+                                                        75% and higher
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="field">
+                                                <label>Delivery</label
+                                                ><select>
+                                                    <option>Immediately</option>
+                                                    <option>
+                                                        Digest every hour
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>States</h2>
+                <div class="sub">Empty and loading states</div>
+                <div class="artboard-wrap">
+                    <div class="label">Posts · Empty</div>
+                    <div class="artboard">
+                        <div class="app">
+                            <aside class="side">
+                                <div class="brand">
+                                    <div class="mark">OS</div>
+                                    Opportunity Scout
+                                </div>
+                                <div class="nav">Dashboard</div>
+                                <div class="nav on">Posts</div>
+                                <div class="nav">Settings</div>
+                            </aside>
+                            <main>
+                                <div class="top">
+                                    <div class="ttl">Posts</div>
+                                </div>
+                                <div class="content">
+                                    <div class="card empty">
+                                        <div>
+                                            <div style="font-size: 30px">⌕</div>
+                                            <h3>No posts yet</h3>
+                                            <div
+                                                class="tiny"
+                                                style="
+                                                    max-width: 360px;
+                                                    line-height: 1.6;
+                                                "
+                                            >
+                                                Opportunity Scout hasn't
+                                                collected anything yet. Check
+                                                your keywords and scraping
+                                                frequency, then wait for the
+                                                next run.
+                                            </div>
+                                            <button
+                                                class="btn primary"
+                                                style="margin-top: 14px"
+                                            >
+                                                Open settings
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+                </div>
+                <div class="artboard-wrap">
+                    <div class="label">Posts · Loading</div>
+                    <div class="artboard">
+                        <div class="app">
+                            <aside class="side">
+                                <div class="brand">
+                                    <div class="mark">OS</div>
+                                    Opportunity Scout
+                                </div>
+                                <div class="nav">Dashboard</div>
+                                <div class="nav on">Posts</div>
+                                <div class="nav">Settings</div>
+                            </aside>
+                            <main>
+                                <div class="top">
+                                    <div class="ttl">Posts</div>
+                                </div>
+                                <div class="content">
+                                    <div class="card">
+                                        <div
+                                            style="
+                                                display: grid;
+                                                grid-template-columns: 2fr 0.7fr 0.5fr 0.5fr;
+                                                gap: 20px;
+                                                padding: 16px 4px;
+                                                border-bottom: 1px solid
+                                                    var(--border);
+                                            "
+                                        >
+                                            <div
+                                                class="sk"
+                                                style="width: 75%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 55%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 70%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 50%"
+                                            ></div>
+                                        </div>
+                                        <div
+                                            style="
+                                                display: grid;
+                                                grid-template-columns: 2fr 0.7fr 0.5fr 0.5fr;
+                                                gap: 20px;
+                                                padding: 16px 4px;
+                                                border-bottom: 1px solid
+                                                    var(--border);
+                                            "
+                                        >
+                                            <div
+                                                class="sk"
+                                                style="width: 75%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 55%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 70%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 50%"
+                                            ></div>
+                                        </div>
+                                        <div
+                                            style="
+                                                display: grid;
+                                                grid-template-columns: 2fr 0.7fr 0.5fr 0.5fr;
+                                                gap: 20px;
+                                                padding: 16px 4px;
+                                                border-bottom: 1px solid
+                                                    var(--border);
+                                            "
+                                        >
+                                            <div
+                                                class="sk"
+                                                style="width: 75%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 55%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 70%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 50%"
+                                            ></div>
+                                        </div>
+                                        <div
+                                            style="
+                                                display: grid;
+                                                grid-template-columns: 2fr 0.7fr 0.5fr 0.5fr;
+                                                gap: 20px;
+                                                padding: 16px 4px;
+                                                border-bottom: 1px solid
+                                                    var(--border);
+                                            "
+                                        >
+                                            <div
+                                                class="sk"
+                                                style="width: 75%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 55%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 70%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 50%"
+                                            ></div>
+                                        </div>
+                                        <div
+                                            style="
+                                                display: grid;
+                                                grid-template-columns: 2fr 0.7fr 0.5fr 0.5fr;
+                                                gap: 20px;
+                                                padding: 16px 4px;
+                                                border-bottom: 1px solid
+                                                    var(--border);
+                                            "
+                                        >
+                                            <div
+                                                class="sk"
+                                                style="width: 75%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 55%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 70%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 50%"
+                                            ></div>
+                                        </div>
+                                        <div
+                                            style="
+                                                display: grid;
+                                                grid-template-columns: 2fr 0.7fr 0.5fr 0.5fr;
+                                                gap: 20px;
+                                                padding: 16px 4px;
+                                                border-bottom: 1px solid
+                                                    var(--border);
+                                            "
+                                        >
+                                            <div
+                                                class="sk"
+                                                style="width: 75%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 55%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 70%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 50%"
+                                            ></div>
+                                        </div>
+                                        <div
+                                            style="
+                                                display: grid;
+                                                grid-template-columns: 2fr 0.7fr 0.5fr 0.5fr;
+                                                gap: 20px;
+                                                padding: 16px 4px;
+                                                border-bottom: 1px solid
+                                                    var(--border);
+                                            "
+                                        >
+                                            <div
+                                                class="sk"
+                                                style="width: 75%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 55%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 70%"
+                                            ></div>
+                                            <div
+                                                class="sk"
+                                                style="width: 50%"
+                                            ></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <script>
+            const root = document.documentElement;
+            document.getElementById('dark').onclick = () => {
+                root.dataset.theme = 'dark';
+                dark.classList.add('on');
+                light.classList.remove('on');
+            };
+            document.getElementById('light').onclick = () => {
+                root.dataset.theme = 'light';
+                light.classList.add('on');
+                dark.classList.remove('on');
+            };
+            document
+                .querySelectorAll('[data-c]')
+                .forEach(
+                    (b) =>
+                        (b.onclick = () =>
+                            root.style.setProperty('--accent', b.dataset.c)),
+                );
+            document.addEventListener('click', (e) => {
+                const btn = e.target.closest('.row-like');
+                if (!btn) return;
+                const active = btn.classList.toggle('active');
+                btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+                btn.title = active ? 'Marked as relevant' : 'Mark as relevant';
+            });
+            document.querySelectorAll('.relevant-btn').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const active = btn.classList.toggle('active');
+                    btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+                    const label = btn.querySelector('span:last-child');
+                    if (label)
+                        label.textContent = active
+                            ? 'Marked as relevant'
+                            : 'Mark as relevant';
+                });
+            });
+        </script>
+    </body>
+</html>
