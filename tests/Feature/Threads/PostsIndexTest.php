@@ -42,7 +42,7 @@ class PostsIndexTest extends TestCase
         $this->assertSame(12, $props['total']);
         $first = $props['data'][0];
         $this->assertEqualsCanonicalizing(
-            ['id', 'threadsPostId', 'text', 'permalink', 'username', 'keyword', 'postedAt', 'foundAt'],
+            ['id', 'threadsPostId', 'text', 'permalink', 'username', 'keyword', 'postedAt', 'foundAt', 'replyUrl', 'isRelevant'],
             array_keys($first),
         );
         $this->assertSame($posts[0]->threads_post_id, $first['threadsPostId']);
@@ -52,6 +52,53 @@ class PostsIndexTest extends TestCase
         $this->assertSame('laravel', $first['keyword']);
         $this->assertSame('2026-10-23 11:59:00', Carbon::parse($first['postedAt'])->utc()->format('Y-m-d H:i:s'));
         $this->assertSame('2026-10-23 12:00:00', Carbon::parse($first['foundAt'])->utc()->format('Y-m-d H:i:s'));
+        $this->assertFalse($first['isRelevant']);
+    }
+
+    /**
+     * SPEC-01 AC-61, AC-117: relevant-marked posts come first, newest post time first within each group.
+     */
+    public function test_relevant_posts_are_listed_first_then_newest_post_first(): void
+    {
+        $this->travelTo('2026-10-23 12:00:00');
+        $user = User::factory()->create();
+        $posts = collect(range(0, 11))->map(fn (int $index) => $this->makePost($user, [
+            'posted_at' => now()->subMinutes($index + 1),
+            'is_relevant' => false,
+        ]));
+        // The two oldest-by-posted_at posts are marked relevant; the newer of the two leads.
+        $posts[11]->update(['is_relevant' => true]);
+        $posts[10]->update(['is_relevant' => true]);
+
+        $props = $this->actingAs($user)->get(route('posts.index'))->requiredProp('posts');
+
+        $expectedIds = [
+            $posts[10]->id,
+            $posts[11]->id,
+            ...$posts->take(8)->pluck('id')->all(),
+        ];
+        $this->assertSame($expectedIds, array_column($props['data'], 'id'));
+        $this->assertSame([true, true], array_column(array_slice($props['data'], 0, 2), 'isRelevant'));
+        $this->assertSame(
+            array_fill(0, 8, false),
+            array_column(array_slice($props['data'], 2, 8), 'isRelevant'),
+        );
+    }
+
+    /**
+     * SPEC-01 AC-62, AC-116: a post row carries a replyUrl built from its permalink and the user's saved template.
+     */
+    public function test_post_rows_carry_the_reply_url_with_the_users_template(): void
+    {
+        $user = User::factory()->create(['reply_template' => 'Thanks!']);
+        $this->makePost($user, ['permalink' => 'https://www.threads.com/@alice/post/ABC123']);
+
+        $props = $this->actingAs($user)->get(route('posts.index'))->requiredProp('posts');
+
+        $this->assertSame(
+            'https://www.threads.com/intent/post?reply_post_shortcode=ABC123&text=Thanks%21',
+            $props['data'][0]['replyUrl'],
+        );
     }
 
     /**
@@ -372,17 +419,23 @@ class PostsIndexTest extends TestCase
     }
 
     /**
-     * SPEC-01 AC-72 (M-4): the cooldown reports when the next manual run is possible.
+     * SPEC-01 AC-72 (D-29), searchStatus shape: `manualRunAvailableAt` is always null, even right after a manual run.
      */
-    public function test_search_status_reports_when_the_cooldown_ends(): void
+    public function test_manual_run_available_at_stays_null_after_a_recent_manual_run(): void
     {
         $this->travelTo('2026-10-23 12:00:00');
-        $user = User::factory()->create();
-        $this->arrangeManualRunBlocker($user, 'cooldown');
+        $user = $this->createConnectedUser();
+        $this->makeKeyword($user, 'laravel');
+        ThreadsSearchRun::factory()->for($user)->manual()->create([
+            'queued_at' => now()->subMinute(),
+            'started_at' => now()->subMinute(),
+            'finished_at' => now()->subMinute(),
+        ]);
 
         $status = $this->actingAs($user)->get(route('posts.index'))->requiredProp('searchStatus');
 
-        $this->assertSame('2026-10-23 12:10:00', Carbon::parse($status['manualRunAvailableAt'])->utc()->format('Y-m-d H:i:s'));
+        $this->assertNull($status['manualRunBlockedReason']);
+        $this->assertNull($status['manualRunAvailableAt']);
     }
 
     /**
@@ -394,7 +447,6 @@ class PostsIndexTest extends TestCase
             'M-1 not connected' => ['not_connected'],
             'M-2 no keywords' => ['no_keywords'],
             'M-3 run in progress' => ['run_in_progress'],
-            'M-4 cooldown' => ['cooldown'],
             'M-5 paused' => ['paused'],
             'M-6 budget' => ['budget'],
         ];

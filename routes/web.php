@@ -3,6 +3,8 @@
 use App\Http\Controllers\Legal\DataDeletionController;
 use App\Http\Controllers\Threads\DashboardController;
 use App\Http\Controllers\Threads\PostController;
+use App\Http\Controllers\Threads\PostRelevanceController;
+use App\Http\Controllers\Threads\ReplyTemplateController;
 use App\Http\Controllers\Threads\ScrapingSettingsController;
 use App\Http\Controllers\Threads\SearchRunController;
 use App\Http\Controllers\Threads\ThreadsConnectionController;
@@ -25,6 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('posts', [PostController::class, 'index'])->name('posts.index');
     Route::get('posts/{post}', [PostController::class, 'show'])->whereNumber('post')->name('posts.show');
+    Route::patch('posts/{post}/relevant', [PostRelevanceController::class, 'update'])->whereNumber('post')->name('posts.relevant.update');
 
     Route::post('search-runs', [SearchRunController::class, 'store'])
         ->middleware('throttle:search-runs')
@@ -45,6 +48,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('scraping', [ScrapingSettingsController::class, 'show'])->name('scraping');
         Route::patch('search-settings', [ScrapingSettingsController::class, 'update'])->name('searchSettings.update');
+        Route::get('reply-template', [ReplyTemplateController::class, 'show'])->name('replyTemplate.show');
+        Route::patch('reply-template', [ReplyTemplateController::class, 'update'])->name('replyTemplate.update');
         Route::inertia('ai-filtering', 'scout-settings/AiFiltering')->name('aiFiltering');
         Route::get('threads', [ThreadsConnectionController::class, 'show'])->name('threads');
         Route::inertia('integrations', 'scout-settings/Integrations')->name('integrations');

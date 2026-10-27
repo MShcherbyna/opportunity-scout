@@ -21,12 +21,12 @@ class SearchStatusResource extends JsonResource
      *     nextRunAt: string|null,
      *     pausedUntil: string|null,
      *     manualRunBlockedReason: string|null,
-     *     manualRunAvailableAt: string|null
+     *     manualRunAvailableAt: null
      * }
      */
     public function toArray(Request $request): array
     {
-        /** @var array{runState: string, lastRun: ThreadsSearchRun|null, nextRunAt: CarbonInterface|null, pausedUntil: CarbonInterface|null, block: array{reason: string|null, availableAt: CarbonInterface|null, pausedUntil: CarbonInterface|null}} $status */
+        /** @var array{runState: string, lastRun: ThreadsSearchRun|null, nextRunAt: CarbonInterface|null, pausedUntil: CarbonInterface|null, block: array{reason: string|null, pausedUntil: CarbonInterface|null}} $status */
         $status = $this->resource;
         $lastRun = $status['lastRun'];
 
@@ -39,7 +39,7 @@ class SearchStatusResource extends JsonResource
             'nextRunAt' => $status['nextRunAt']?->toIso8601String(),
             'pausedUntil' => $status['pausedUntil']?->toIso8601String(),
             'manualRunBlockedReason' => $status['block']['reason'],
-            'manualRunAvailableAt' => $status['block']['availableAt']?->toIso8601String(),
+            'manualRunAvailableAt' => null,
         ];
     }
 }

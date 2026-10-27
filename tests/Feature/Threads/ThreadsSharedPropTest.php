@@ -24,6 +24,7 @@ class ThreadsSharedPropTest extends TestCase
             'posts' => ['posts.index'],
             'scraping settings' => ['settings.scraping'],
             'threads settings' => ['settings.threads'],
+            'reply template settings' => ['settings.replyTemplate.show'],
             'account profile' => ['profile.edit'],
         ];
     }

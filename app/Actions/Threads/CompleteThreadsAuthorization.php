@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\Threads\ThreadsApiException;
 use App\Services\Threads\ThreadsOAuth;
 use Illuminate\Contracts\Session\Session;
+use Illuminate\Support\Facades\Log;
 
 class CompleteThreadsAuthorization
 {
@@ -40,7 +41,15 @@ class CompleteThreadsAuthorization
 
         try {
             $connection = $this->connectThreadsAccount->handle($user, $code);
-        } catch (ThreadsApiException) {
+        } catch (ThreadsApiException $exception) {
+            Log::warning('Threads account connection failed.', [
+                'user_id' => $user->id,
+                'kind' => $exception->kind->value,
+                'http_status' => $exception->httpStatus,
+                'threads_code' => $exception->threadsCode,
+                'body' => $exception->sanitizedBody,
+            ]);
+
             return ThreadsCallbackOutcome::ConnectFailed;
         }
 

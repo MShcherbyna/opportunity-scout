@@ -11,8 +11,9 @@ class PostListing
     public const PER_PAGE = 10;
 
     /**
-     * One page of the user's posts, newest first; a page past the end is clamped to the last page.
-     * The search uses an explicit `escape '!'` because SQLite's LIKE has no default escape character.
+     * One page of the user's posts, relevant-marked first then newest post first; a page past the
+     * end is clamped to the last page. The search uses an explicit `escape '!'` because SQLite's
+     * LIKE has no default escape character.
      *
      * @return LengthAwarePaginator<int, ThreadsPost>
      */
@@ -30,7 +31,7 @@ class PostListing
         $total = (clone $query)->count();
         $lastPage = max(1, (int) ceil($total / self::PER_PAGE));
         $page = min($page, $lastPage);
-        $posts = $query->orderByDesc('posted_at')->orderByDesc('id')->forPage($page, self::PER_PAGE)->get();
+        $posts = $query->orderByDesc('is_relevant')->orderByDesc('posted_at')->orderByDesc('id')->forPage($page, self::PER_PAGE)->get();
 
         return new LengthAwarePaginator($posts, $total, self::PER_PAGE, $page);
     }

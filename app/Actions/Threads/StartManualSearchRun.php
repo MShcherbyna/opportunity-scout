@@ -15,9 +15,9 @@ class StartManualSearchRun
     public function __construct(private SearchStatus $searchStatus) {}
 
     /**
-     * Queue a manual run; when it is refused (M-1..M-6) the run is null and the block says why.
+     * Queue a manual run; when it is refused (M-1, M-2, M-3, M-5, M-6) the run is null and the block says why.
      *
-     * @return array{run: ThreadsSearchRun|null, block: array{reason: string|null, availableAt: CarbonInterface|null, pausedUntil: CarbonInterface|null}}
+     * @return array{run: ThreadsSearchRun|null, block: array{reason: string|null, pausedUntil: CarbonInterface|null}}
      */
     public function handle(User $user): array
     {

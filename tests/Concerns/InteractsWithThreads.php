@@ -299,7 +299,7 @@ trait InteractsWithThreads
 
     /**
      * Put the user in the state that makes a manual run refuse for the given reason
-     * (`not_connected`, `no_keywords`, `run_in_progress`, `cooldown`, `paused`, `budget`).
+     * (`not_connected`, `no_keywords`, `run_in_progress`, `paused`, `budget`).
      * Expects the clock to be frozen by the caller.
      */
     protected function arrangeManualRunBlocker(User $user, string $reason): void
@@ -314,11 +314,6 @@ trait InteractsWithThreads
 
         match ($reason) {
             'run_in_progress' => ThreadsSearchRun::factory()->for($user)->queued()->create(),
-            'cooldown' => ThreadsSearchRun::factory()->for($user)->manual()->create([
-                'queued_at' => now()->subMinutes(5),
-                'started_at' => now()->subMinutes(5),
-                'finished_at' => now()->subMinutes(4),
-            ]),
             'paused' => $user->threadsConnection()->update(['search_paused_until' => now()->addHour()]),
             'budget' => ThreadsSearchRun::factory()->for($user)->scheduled()->create([
                 'queued_at' => now()->subHour(),

@@ -117,4 +117,19 @@ class ScrapingSettingsPageTest extends TestCase
             'disabled' => [false],
         ];
     }
+
+    /**
+     * SPEC-01 RT-8, MC-2, D-32: the page no longer passes the reply template, which moved to its own tab.
+     */
+    public function test_scraping_page_no_longer_passes_the_reply_template(): void
+    {
+        $user = User::factory()->create(['reply_template' => 'Thanks for reaching out, I\'d love to help!']);
+
+        $this->actingAs($user)
+            ->get(route('settings.scraping'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('scout-settings/Scraping')
+                ->missing('replyTemplate')
+            );
+    }
 }

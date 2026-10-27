@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Threads;
 
+use App\Models\ThreadsConnection;
+use App\Models\ThreadsKeyword;
 use App\Models\ThreadsSearchRun;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -67,7 +69,7 @@ class DashboardThreadsTest extends TestCase
 
         $stats = $this->actingAs($user)->get(route('dashboard'))->requiredProp('stats');
 
-        $this->assertSame(['postsFound' => 5, 'foundLast7Days' => 3, 'foundToday' => 1], $stats);
+        $this->assertSame(['postsFound' => 5, 'foundLast7Days' => 3, 'foundToday' => 1, 'relevantPosts' => 0], $stats);
     }
 
     /**
@@ -84,10 +86,10 @@ class DashboardThreadsTest extends TestCase
         $activity = $this->actingAs($user)->get(route('dashboard'))->requiredProp('activity');
 
         $this->assertCount(30, $activity);
-        $this->assertSame(['date' => '2026-09-24', 'found' => 0], $activity[0]);
-        $this->assertSame(['date' => '2026-10-21', 'found' => 1], $activity[27]);
-        $this->assertSame(['date' => '2026-10-22', 'found' => 0], $activity[28]);
-        $this->assertSame(['date' => '2026-10-23', 'found' => 2], $activity[29]);
+        $this->assertSame(['date' => '2026-09-24', 'found' => 0, 'relevant' => 0], $activity[0]);
+        $this->assertSame(['date' => '2026-10-21', 'found' => 1, 'relevant' => 0], $activity[27]);
+        $this->assertSame(['date' => '2026-10-22', 'found' => 0, 'relevant' => 0], $activity[28]);
+        $this->assertSame(['date' => '2026-10-23', 'found' => 2, 'relevant' => 0], $activity[29]);
     }
 
     /**
@@ -104,9 +106,9 @@ class DashboardThreadsTest extends TestCase
 
         $activity = $response->requiredProp('activity');
         $this->assertSame(1, $response->requiredProp('stats.foundToday'));
-        $this->assertSame(['date' => '2026-09-25', 'found' => 0], $activity[0]);
-        $this->assertSame(['date' => '2026-10-23', 'found' => 1], $activity[28]);
-        $this->assertSame(['date' => '2026-10-24', 'found' => 1], $activity[29]);
+        $this->assertSame(['date' => '2026-09-25', 'found' => 0, 'relevant' => 0], $activity[0]);
+        $this->assertSame(['date' => '2026-10-23', 'found' => 1, 'relevant' => 0], $activity[28]);
+        $this->assertSame(['date' => '2026-10-24', 'found' => 1, 'relevant' => 0], $activity[29]);
     }
 
     /**
@@ -123,8 +125,8 @@ class DashboardThreadsTest extends TestCase
 
         $activity = $response->requiredProp('activity');
         $this->assertSame(1, $response->requiredProp('stats.foundToday'));
-        $this->assertSame(['date' => '2026-10-23', 'found' => 1], $activity[28]);
-        $this->assertSame(['date' => '2026-10-24', 'found' => 1], $activity[29]);
+        $this->assertSame(['date' => '2026-10-23', 'found' => 1, 'relevant' => 0], $activity[28]);
+        $this->assertSame(['date' => '2026-10-24', 'found' => 1, 'relevant' => 0], $activity[29]);
     }
 
     /**
@@ -147,8 +149,8 @@ class DashboardThreadsTest extends TestCase
         $response->assertOk();
         $activity = $response->requiredProp('activity');
         $this->assertSame(2, $response->requiredProp('stats.foundToday'));
-        $this->assertSame(['date' => '2026-09-24', 'found' => 0], $activity[0]);
-        $this->assertSame(['date' => '2026-10-23', 'found' => 2], $activity[29]);
+        $this->assertSame(['date' => '2026-09-24', 'found' => 0, 'relevant' => 0], $activity[0]);
+        $this->assertSame(['date' => '2026-10-23', 'found' => 2, 'relevant' => 0], $activity[29]);
     }
 
     /**
@@ -179,8 +181,70 @@ class DashboardThreadsTest extends TestCase
 
         $this->assertSame($posts->take(5)->pluck('id')->all(), array_column($latest, 'id'));
         $this->assertEqualsCanonicalizing(
-            ['id', 'threadsPostId', 'text', 'permalink', 'username', 'keyword', 'postedAt', 'foundAt'],
+            ['id', 'threadsPostId', 'text', 'permalink', 'username', 'keyword', 'postedAt', 'foundAt', 'replyUrl', 'isRelevant'],
             array_keys($latest[0]),
+        );
+    }
+
+    /**
+     * SPEC-01 AC-118, AC-77: within the 5 most recently found posts, relevant-marked ones come first.
+     */
+    public function test_latest_posts_show_relevant_ones_first_within_the_five_most_recently_found(): void
+    {
+        $this->travelTo('2026-10-23 12:00:00');
+        $user = User::factory()->create();
+        $posts = collect(range(0, 6))->map(fn (int $index) => $this->makePost($user, [
+            'created_at' => now()->subMinutes($index),
+            'is_relevant' => false,
+        ]));
+        $posts[3]->update(['is_relevant' => true]);
+        $posts[4]->update(['is_relevant' => true]);
+
+        $latest = $this->actingAs($user)->get(route('dashboard'))->requiredProp('latestPosts');
+
+        $this->assertSame(
+            [$posts[3]->id, $posts[4]->id, $posts[0]->id, $posts[1]->id, $posts[2]->id],
+            array_column($latest, 'id'),
+        );
+    }
+
+    /**
+     * SPEC-01 AC-118: a relevant post found outside the 5 most recently found window does not appear;
+     * AC-118 reorders within the 5, it never widens or changes which 5 qualify.
+     */
+    public function test_relevant_post_outside_the_five_most_recently_found_is_not_shown(): void
+    {
+        $this->travelTo('2026-10-23 12:00:00');
+        $user = User::factory()->create();
+        $recent = collect(range(0, 4))->map(fn (int $index) => $this->makePost($user, [
+            'created_at' => now()->subMinutes($index),
+            'posted_at' => now()->subMinutes($index),
+            'is_relevant' => false,
+        ]));
+        $this->makePost($user, [
+            'created_at' => now()->subHour(),
+            'posted_at' => now(),
+            'is_relevant' => true,
+        ]);
+
+        $latest = $this->actingAs($user)->get(route('dashboard'))->requiredProp('latestPosts');
+
+        $this->assertSame($recent->pluck('id')->all(), array_column($latest, 'id'));
+    }
+
+    /**
+     * SPEC-01 AC-77, AC-116: a latest-posts row carries a replyUrl built from its permalink and the user's saved template.
+     */
+    public function test_latest_posts_carry_the_reply_url_with_the_users_template(): void
+    {
+        $user = User::factory()->create(['reply_template' => 'Thanks!']);
+        $this->makePost($user, ['permalink' => 'https://www.threads.com/@alice/post/ABC123']);
+
+        $latest = $this->actingAs($user)->get(route('dashboard'))->requiredProp('latestPosts');
+
+        $this->assertSame(
+            'https://www.threads.com/intent/post?reply_post_shortcode=ABC123&text=Thanks%21',
+            $latest[0]['replyUrl'],
         );
     }
 
@@ -198,9 +262,46 @@ class DashboardThreadsTest extends TestCase
         $response = $this->actingAs($user)->get(route('dashboard'));
 
         $this->assertSame([], $response->requiredProp('latestPosts'));
-        $this->assertSame(['postsFound' => 0, 'foundLast7Days' => 0, 'foundToday' => 0], $response->requiredProp('stats'));
+        $this->assertSame(
+            ['postsFound' => 0, 'foundLast7Days' => 0, 'foundToday' => 0, 'relevantPosts' => 0],
+            $response->requiredProp('stats'),
+        );
         $this->assertSame(0, $response->requiredProp('threadsQuota.usedLast24Hours'));
         $this->assertSame(0, array_sum(array_column($response->requiredProp('activity'), 'found')));
+    }
+
+    /**
+     * SPEC-01 AC-105, NFR-6: "Relevant posts" counts only the user's marked posts, with no time window.
+     */
+    public function test_relevant_posts_stat_counts_the_users_marked_posts(): void
+    {
+        $this->travelTo('2026-10-23 12:00:00');
+        $user = User::factory()->create();
+        $this->makePost($user, ['is_relevant' => true]);
+        $this->makePost($user, ['is_relevant' => true, 'created_at' => now()->subDays(60)]);
+        $this->makePost($user, ['is_relevant' => false]);
+        $this->makePost(User::factory()->create(), ['is_relevant' => true]);
+
+        $stats = $this->actingAs($user)->get(route('dashboard'))->requiredProp('stats');
+
+        $this->assertSame(2, $stats['relevantPosts']);
+    }
+
+    /**
+     * SPEC-01 AC-105, RT-16: each day's `relevant` count is that day's found posts currently marked relevant.
+     */
+    public function test_activity_series_counts_relevant_posts_per_found_day(): void
+    {
+        $this->travelTo('2026-10-23 15:00:00');
+        $user = User::factory()->create();
+        $this->makePost($user, ['created_at' => '2026-10-23 01:00:00', 'is_relevant' => true]);
+        $this->makePost($user, ['created_at' => '2026-10-23 14:00:00', 'is_relevant' => false]);
+        $this->makePost($user, ['created_at' => '2026-10-21 09:00:00', 'is_relevant' => true]);
+
+        $activity = $this->actingAs($user)->get(route('dashboard'))->requiredProp('activity');
+
+        $this->assertSame(['date' => '2026-10-21', 'found' => 1, 'relevant' => 1], $activity[27]);
+        $this->assertSame(['date' => '2026-10-23', 'found' => 2, 'relevant' => 1], $activity[29]);
     }
 
     /**
@@ -224,6 +325,41 @@ class DashboardThreadsTest extends TestCase
                     ->missing('activity')
                 )
             );
+    }
+
+    /**
+     * SPEC-01 AC-114, MC-8: the Dashboard banner source.
+     */
+    #[DataProvider('readinessStates')]
+    public function test_dashboard_search_status_names_the_readiness_banner_state(callable $arrange, ?string $expected): void
+    {
+        $user = User::factory()->create();
+        $arrange($user);
+
+        $status = $this->actingAs($user)->get(route('dashboard'))->requiredProp('searchStatus');
+
+        $this->assertSame($expected, $status['manualRunBlockedReason']);
+    }
+
+    /**
+     * @return array<string, array{callable(User): void, string|null}>
+     */
+    public static function readinessStates(): array
+    {
+        return [
+            'no connection' => [fn (User $user) => null, 'not_connected'],
+            'disconnected connection' => [function (User $user): void {
+                ThreadsConnection::factory()->for($user)->disconnected()->create();
+                ThreadsKeyword::factory()->for($user)->create(['keyword' => 'laravel']);
+            }, 'not_connected'],
+            'connected, no keywords' => [function (User $user): void {
+                ThreadsConnection::factory()->for($user)->create();
+            }, 'no_keywords'],
+            'connected with keywords' => [function (User $user): void {
+                ThreadsConnection::factory()->for($user)->create();
+                ThreadsKeyword::factory()->for($user)->create(['keyword' => 'laravel']);
+            }, null],
+        ];
     }
 
     private function makeRun(User $user, \DateTimeInterface $startedAt, int $queriesSent): ThreadsSearchRun

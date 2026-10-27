@@ -19,6 +19,7 @@ use Illuminate\Support\Carbon;
  * @property string $username
  * @property string $keyword
  * @property Carbon $posted_at
+ * @property bool $is_relevant
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -31,6 +32,7 @@ use Illuminate\Support\Carbon;
     'username',
     'keyword',
     'posted_at',
+    'is_relevant',
 ])]
 class ThreadsPost extends Model
 {
@@ -46,6 +48,7 @@ class ThreadsPost extends Model
     {
         return [
             'posted_at' => 'datetime',
+            'is_relevant' => 'boolean',
         ];
     }
 

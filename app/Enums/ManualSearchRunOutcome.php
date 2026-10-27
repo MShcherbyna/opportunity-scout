@@ -12,14 +12,13 @@ enum ManualSearchRunOutcome: string
     case NotConnected = 'not_connected';
     case NoKeywords = 'no_keywords';
     case RunInProgress = 'run_in_progress';
-    case Cooldown = 'cooldown';
     case Paused = 'paused';
     case Budget = 'budget';
 
     /**
      * The outcome of a StartManualSearchRun result; an unknown block reason counts as a run in progress.
      *
-     * @param  array{run: ThreadsSearchRun|null, block: array{reason: string|null, availableAt: CarbonInterface|null, pausedUntil: CarbonInterface|null}}  $result
+     * @param  array{run: ThreadsSearchRun|null, block: array{reason: string|null, pausedUntil: CarbonInterface|null}}  $result
      */
     public static function fromResult(array $result): self
     {
@@ -41,7 +40,7 @@ enum ManualSearchRunOutcome: string
     }
 
     /**
-     * The toast copy; the time is the end of the cooldown or pause and is shown in the given zone.
+     * The toast copy; the time is the end of the pause and is shown in the given zone.
      */
     public function toastMessage(?CarbonInterface $time, string $timezone): string
     {
@@ -51,7 +50,6 @@ enum ManualSearchRunOutcome: string
             self::Started => 'Search started.',
             self::NotConnected => 'Connect Threads to run a search.',
             self::NoKeywords => 'Add keywords to run a search.',
-            self::Cooldown => 'You can run a search again at '.$formatted.'.',
             self::Paused => 'Search is paused until '.$formatted.'.',
             self::Budget => "Not enough searches left in today's budget.",
             self::RunInProgress => 'A search is already running.',
@@ -61,13 +59,12 @@ enum ManualSearchRunOutcome: string
     /**
      * The toast to flash for the outcome.
      *
-     * @param  array{reason: string|null, availableAt: CarbonInterface|null, pausedUntil: CarbonInterface|null}  $block
+     * @param  array{reason: string|null, pausedUntil: CarbonInterface|null}  $block
      * @return array{type: string, message: string}
      */
     public function toast(array $block, string $timezone): array
     {
         $time = match ($this) {
-            self::Cooldown => $block['availableAt'],
             self::Paused => $block['pausedUntil'],
             default => null,
         };

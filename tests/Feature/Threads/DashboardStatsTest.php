@@ -25,8 +25,8 @@ class DashboardStatsTest extends TestCase
         $user = User::factory()->create();
         $other = User::factory()->create();
 
-        $this->makeFoundPost($user, '2026-10-23 03:59:59');
-        $this->makeFoundPost($user, '2026-10-23 04:00:00');
+        $this->makeFoundPost($user, '2026-10-23 03:59:59', isRelevant: true);
+        $this->makeFoundPost($user, '2026-10-23 04:00:00', isRelevant: true);
         $this->makeFoundPost($user, '2026-10-23 04:00:00');
         $this->makeFoundPost($user, '2026-09-24 04:00:00');
         $this->makeFoundPost($user, '2026-09-24 03:59:59');
@@ -41,15 +41,20 @@ class DashboardStatsTest extends TestCase
         $this->assertSame(1, $activity[28]['found']);
         $this->assertSame(2, $activity[29]['found']);
         $this->assertSame(4, array_sum(array_column($activity, 'found')));
+        // 2026-10-23 04:00:00 is day 29 (client day); the 03:59:59 post belongs to day 28.
+        $this->assertSame(1, $activity[29]['relevant']);
+        $this->assertSame(1, $activity[28]['relevant']);
+        $this->assertSame(2, array_sum(array_column($activity, 'relevant')));
 
         foreach ($activity as $day) {
             $this->assertIsInt($day['found']);
+            $this->assertIsInt($day['relevant']);
         }
     }
 
-    private function makeFoundPost(User $user, string $foundAtUtc): void
+    private function makeFoundPost(User $user, string $foundAtUtc, bool $isRelevant = false): void
     {
-        $this->makePost($user)->forceFill([
+        $this->makePost($user, ['is_relevant' => $isRelevant])->forceFill([
             'created_at' => $foundAtUtc,
             'updated_at' => $foundAtUtc,
         ])->saveQuietly();

@@ -10,8 +10,6 @@ use Carbon\CarbonInterface;
 
 class SearchStatus
 {
-    public const MANUAL_RUN_COOLDOWN_MINUTES = 15;
-
     public function __construct(private SearchBudget $budget) {}
 
     /**
@@ -22,7 +20,7 @@ class SearchStatus
      *     lastRun: ThreadsSearchRun|null,
      *     nextRunAt: CarbonInterface|null,
      *     pausedUntil: CarbonInterface|null,
-     *     block: array{reason: string|null, availableAt: CarbonInterface|null, pausedUntil: CarbonInterface|null}
+     *     block: array{reason: string|null, pausedUntil: CarbonInterface|null}
      * }
      */
     public function snapshot(User $user): array
@@ -50,9 +48,9 @@ class SearchStatus
     }
 
     /**
-     * Why a manual run is refused right now (M-1..M-6, checked in that order), or null when it may start.
+     * Why a manual run is refused right now (M-1, M-2, M-3, M-5, M-6, checked in that order), or null when it may start.
      *
-     * @return array{reason: string|null, availableAt: CarbonInterface|null, pausedUntil: CarbonInterface|null}
+     * @return array{reason: string|null, pausedUntil: CarbonInterface|null}
      */
     public function manualRunBlock(User $user): array
     {
@@ -72,16 +70,6 @@ class SearchStatus
             return $this->block('run_in_progress');
         }
 
-        $lastManualRun = $user->threadsSearchRuns()
-            ->where('trigger', ThreadsSearchRunTrigger::Manual)
-            ->where('queued_at', '>', now()->subMinutes(self::MANUAL_RUN_COOLDOWN_MINUTES))
-            ->latest('queued_at')
-            ->first();
-
-        if ($lastManualRun !== null) {
-            return $this->block('cooldown', availableAt: $lastManualRun->queued_at->copy()->addMinutes(self::MANUAL_RUN_COOLDOWN_MINUTES));
-        }
-
         $pausedUntil = $this->pausedUntil($user);
 
         if ($pausedUntil !== null) {
@@ -96,11 +84,11 @@ class SearchStatus
     }
 
     /**
-     * @return array{reason: string|null, availableAt: CarbonInterface|null, pausedUntil: CarbonInterface|null}
+     * @return array{reason: string|null, pausedUntil: CarbonInterface|null}
      */
-    private function block(?string $reason, ?CarbonInterface $availableAt = null, ?CarbonInterface $pausedUntil = null): array
+    private function block(?string $reason, ?CarbonInterface $pausedUntil = null): array
     {
-        return ['reason' => $reason, 'availableAt' => $availableAt, 'pausedUntil' => $pausedUntil];
+        return ['reason' => $reason, 'pausedUntil' => $pausedUntil];
     }
 
     /**

@@ -44,8 +44,27 @@ class PostShowTest extends TestCase
                     ->where('keyword', 'laravel')
                     ->where('postedAt', fn (string $value) => Carbon::parse($value)->utc()->format('Y-m-d H:i:s') === '2026-10-23 10:15:00')
                     ->has('foundAt')
+                    ->where('replyUrl', 'https://www.threads.com/intent/post?reply_post_shortcode=ABC123')
+                    ->where('isRelevant', false)
                 )
             );
+    }
+
+    /**
+     * SPEC-01 AC-79, AC-117: the detail page carries the post's relevance flag.
+     */
+    public function test_detail_carries_the_relevance_flag(): void
+    {
+        $user = User::factory()->create();
+        $post = ThreadsPost::factory()->relevant()->create([
+            'user_id' => $user->id,
+            'threads_keyword_id' => null,
+            'keyword' => 'laravel',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('posts.show', $post->id))
+            ->assertInertia(fn (Assert $page) => $page->where('post.isRelevant', true));
     }
 
     /**
@@ -66,6 +85,7 @@ class PostShowTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->where('post.text', null)
                 ->where('post.permalink', null)
+                ->where('post.replyUrl', null)
             );
     }
 

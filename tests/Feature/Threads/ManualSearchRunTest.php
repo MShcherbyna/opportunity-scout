@@ -74,7 +74,6 @@ class ManualSearchRunTest extends TestCase
             'M-1 not connected' => ['not_connected', 'Connect Threads to run a search.'],
             'M-2 no keywords' => ['no_keywords', 'Add keywords to run a search.'],
             'M-3 run in progress' => ['run_in_progress', 'A search is already running.'],
-            'M-4 cooldown' => ['cooldown', 'You can run a search again at 12:10.'],
             'M-5 paused' => ['paused', 'Search is paused until 13:00.'],
             'M-6 budget' => ['budget', "Not enough searches left in today's budget."],
         ];
@@ -102,24 +101,25 @@ class ManualSearchRunTest extends TestCase
     }
 
     /**
-     * SPEC-01 AC-72 (M-4): the cooldown counts from a manual run only; a recent scheduled run does not block.
+     * SPEC-01 AC-71, AC-72 (D-29): a manual run is never refused for recency.
      */
-    public function test_recent_scheduled_run_does_not_trigger_the_manual_cooldown(): void
+    public function test_a_manual_run_can_start_right_after_the_previous_manual_run(): void
     {
         $this->travelTo('2026-10-23 12:00:00');
         Queue::fake([RunThreadsSearch::class]);
         $user = $this->createConnectedUser();
         $this->makeKeyword($user, 'laravel');
-        ThreadsSearchRun::factory()->for($user)->scheduled()->create([
-            'queued_at' => now()->subMinutes(2),
-            'started_at' => now()->subMinutes(2),
-            'finished_at' => now()->subMinute(),
-        ]);
 
-        $response = $this->actingAs($user)->post(route('searchRuns.store'));
+        $first = $this->actingAs($user)->post(route('searchRuns.store'));
+        $first->assertInertiaFlash('toast.message', 'Search started.');
+        $firstRun = $user->threadsSearchRuns()->firstOrFail();
+        $firstRun->update(['started_at' => now(), 'finished_at' => now()]);
 
-        $response->assertInertiaFlash('toast.message', 'Search started.');
-        Queue::assertPushed(RunThreadsSearch::class);
+        $second = $this->actingAs($user)->post(route('searchRuns.store'));
+
+        $second->assertInertiaFlash('toast.message', 'Search started.');
+        $this->assertSame(2, $user->threadsSearchRuns()->count());
+        Queue::assertPushed(RunThreadsSearch::class, 2);
     }
 
     /**
