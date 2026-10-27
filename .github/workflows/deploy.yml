@@ -38,6 +38,9 @@ jobs:
             --exclude='public/build' \
             --exclude='public/hot' \
             --exclude='.phpunit.cache' \
+            --exclude='resources/js/actions' \
+            --exclude='resources/js/routes' \
+            --exclude='resources/js/wayfinder' \
             ./ "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/"
 
       - name: Build and release
