@@ -49,21 +49,21 @@ jobs:
           docker compose -f docker-compose.prod.yml build
           echo "::endgroup::"
           echo "::group::composer install"
-          docker compose -f docker-compose.prod.yml run -T --rm --no-deps app composer install --no-dev --optimize-autoloader
+          docker compose -f docker-compose.prod.yml run -T --rm --no-deps app composer install --no-dev --optimize-autoloader < /dev/null
           echo "::endgroup::"
           echo "::group::npm ci"
-          docker compose -f docker-compose.prod.yml run -T --rm --no-deps app npm ci
+          docker compose -f docker-compose.prod.yml run -T --rm --no-deps app npm ci < /dev/null
           echo "::endgroup::"
           echo "::group::npm run build"
-          docker compose -f docker-compose.prod.yml run -T --rm --no-deps app npm run build
+          docker compose -f docker-compose.prod.yml run -T --rm --no-deps app npm run build < /dev/null
           echo "::endgroup::"
           echo "::group::up -d"
-          docker compose -f docker-compose.prod.yml up -d --remove-orphans
+          docker compose -f docker-compose.prod.yml up -d --remove-orphans < /dev/null
           echo "::endgroup::"
           echo "::group::migrate / cache clear"
-          docker compose -f docker-compose.prod.yml exec -T app php artisan migrate --force
-          docker compose -f docker-compose.prod.yml exec -T app php artisan config:clear
-          docker compose -f docker-compose.prod.yml exec -T app php artisan view:clear
+          docker compose -f docker-compose.prod.yml exec -T app php artisan migrate --force < /dev/null
+          docker compose -f docker-compose.prod.yml exec -T app php artisan config:clear < /dev/null
+          docker compose -f docker-compose.prod.yml exec -T app php artisan view:clear < /dev/null
           echo "::endgroup::"
           docker image prune -f
           echo "Deploy finished at $(date -u +%FT%TZ)"
