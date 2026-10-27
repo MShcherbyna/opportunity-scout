@@ -14,13 +14,14 @@ class SearchSettingsResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @return array{intervalMinutes: int, firstSearchLookbackDays: int}
+     * @return array{intervalMinutes: int, firstSearchLookbackDays: int, manualOnly: bool}
      */
     public function toArray(Request $request): array
     {
         return [
             'intervalMinutes' => $this->searchInterval()->value,
             'firstSearchLookbackDays' => (int) $this->first_search_lookback_days,
+            'manualOnly' => (bool) $this->manual_only,
         ];
     }
 }

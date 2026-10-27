@@ -33,6 +33,7 @@ class DispatchThreadsSearchRuns extends Command
                     });
             })
             ->whereHas('threadsKeywords')
+            ->where('manual_only', false)
             ->whereDoesntHave('threadsSearchRuns', fn ($query) => $query->active())
             ->lazyById()
             ->each(fn (User $user) => $startScheduledSearchRun->handle($user));

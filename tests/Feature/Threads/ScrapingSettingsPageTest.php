@@ -50,7 +50,7 @@ class ScrapingSettingsPageTest extends TestCase
      */
     public function test_scraping_page_passes_the_search_settings(): void
     {
-        $user = User::factory()->create(['search_interval_minutes' => 30, 'first_search_lookback_days' => 3]);
+        $user = User::factory()->create(['search_interval_minutes' => 30, 'first_search_lookback_days' => 3, 'manual_only' => true]);
 
         $this->actingAs($user)
             ->get(route('settings.scraping'))
@@ -58,6 +58,7 @@ class ScrapingSettingsPageTest extends TestCase
                 ->component('scout-settings/Scraping')
                 ->where('searchSettings.intervalMinutes', 30)
                 ->where('searchSettings.firstSearchLookbackDays', 3)
+                ->where('searchSettings.manualOnly', true)
             );
     }
 

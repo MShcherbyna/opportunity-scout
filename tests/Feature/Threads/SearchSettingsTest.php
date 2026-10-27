@@ -22,6 +22,7 @@ class SearchSettingsTest extends TestCase
         $response = $this->actingAs($user)
             ->from(route('settings.scraping'))
             ->patch(route('settings.searchSettings.update'), [
+                'manual_only' => false,
                 'interval_minutes' => 30,
                 'first_search_lookback_days' => 3,
             ]);
@@ -32,6 +33,35 @@ class SearchSettingsTest extends TestCase
         $stored = $user->fresh();
         $this->assertSame(30, $stored->search_interval_minutes);
         $this->assertSame(3, $stored->first_search_lookback_days);
+        $this->assertFalse($stored->manual_only);
+    }
+
+    /**
+     * Turning "run only manually" on is stored and disables scheduled runs (see DispatchThreadsSearchRunsCommandTest).
+     */
+    public function test_manual_only_can_be_turned_on(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->patch(route('settings.searchSettings.update'), [
+                'manual_only' => true,
+                'interval_minutes' => 15,
+                'first_search_lookback_days' => 1,
+            ])
+            ->assertSessionHasNoErrors();
+
+        $this->assertTrue($user->fresh()->manual_only);
+    }
+
+    /**
+     * New users default to scheduled runs enabled.
+     */
+    public function test_new_users_default_to_manual_only_disabled(): void
+    {
+        $user = User::factory()->create()->fresh();
+
+        $this->assertFalse($user->manual_only);
     }
 
     /**
@@ -50,16 +80,17 @@ class SearchSettingsTest extends TestCase
      */
     public static function invalidSettings(): array
     {
-        $valid = ['interval_minutes' => 15, 'first_search_lookback_days' => 1];
+        $valid = ['manual_only' => false, 'interval_minutes' => 15, 'first_search_lookback_days' => 1];
 
         return [
             'interval not in the allowed set' => [[...$valid, 'interval_minutes' => 10], 'interval_minutes'],
             'zero interval' => [[...$valid, 'interval_minutes' => 0], 'interval_minutes'],
             'text interval' => [[...$valid, 'interval_minutes' => 'often'], 'interval_minutes'],
-            'missing interval' => [['first_search_lookback_days' => 1], 'interval_minutes'],
+            'missing interval' => [['manual_only' => false, 'first_search_lookback_days' => 1], 'interval_minutes'],
             'lookback not in the allowed set' => [[...$valid, 'first_search_lookback_days' => 2], 'first_search_lookback_days'],
             'negative lookback' => [[...$valid, 'first_search_lookback_days' => -1], 'first_search_lookback_days'],
-            'missing lookback' => [['interval_minutes' => 15], 'first_search_lookback_days'],
+            'missing lookback' => [['manual_only' => false, 'interval_minutes' => 15], 'first_search_lookback_days'],
+            'missing manual_only' => [['interval_minutes' => 15, 'first_search_lookback_days' => 1], 'manual_only'],
         ];
     }
 
@@ -92,7 +123,7 @@ class SearchSettingsTest extends TestCase
         ThreadsKeyword::factory()->count(7)->for($user)->create();
 
         $this->actingAs($user)
-            ->patchJson(route('settings.searchSettings.update'), ['interval_minutes' => 5, 'first_search_lookback_days' => 1])
+            ->patchJson(route('settings.searchSettings.update'), ['manual_only' => false, 'interval_minutes' => 5, 'first_search_lookback_days' => 1])
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['interval_minutes' => 'A 5-minute interval allows up to 6 keywords. Remove keywords first.']);
 
@@ -108,7 +139,7 @@ class SearchSettingsTest extends TestCase
         ThreadsKeyword::factory()->count(6)->for($user)->create();
 
         $this->actingAs($user)
-            ->patch(route('settings.searchSettings.update'), ['interval_minutes' => 5, 'first_search_lookback_days' => 1])
+            ->patch(route('settings.searchSettings.update'), ['manual_only' => false, 'interval_minutes' => 5, 'first_search_lookback_days' => 1])
             ->assertSessionHasNoErrors();
 
         $this->assertSame(5, $user->fresh()->search_interval_minutes);
@@ -119,7 +150,7 @@ class SearchSettingsTest extends TestCase
      */
     public function test_guests_cannot_change_search_settings(): void
     {
-        $this->patch(route('settings.searchSettings.update'), ['interval_minutes' => 30, 'first_search_lookback_days' => 0])
+        $this->patch(route('settings.searchSettings.update'), ['manual_only' => false, 'interval_minutes' => 30, 'first_search_lookback_days' => 0])
             ->assertRedirect(route('login'));
     }
 }

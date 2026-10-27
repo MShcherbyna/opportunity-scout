@@ -21,7 +21,9 @@ class StartScheduledSearchRun
         $run = DB::transaction(function () use ($user): ?ThreadsSearchRun {
             User::query()->whereKey($user->id)->lockForUpdate()->first();
 
-            if ($user->threadsSearchRuns()->active()->exists() || ! $this->searchStatus->isScheduledRunDue($user)) {
+            if ($user->manual_only
+                || $user->threadsSearchRuns()->active()->exists()
+                || ! $this->searchStatus->isScheduledRunDue($user)) {
                 return null;
             }
 

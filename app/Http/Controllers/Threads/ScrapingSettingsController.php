@@ -41,6 +41,7 @@ class ScrapingSettingsController extends Controller
             $request->user(),
             (int) $request->validated('interval_minutes'),
             (int) $request->validated('first_search_lookback_days'),
+            (bool) $request->validated('manual_only'),
         );
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Search settings saved.']);

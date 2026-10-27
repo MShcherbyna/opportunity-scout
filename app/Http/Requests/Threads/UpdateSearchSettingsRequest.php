@@ -26,6 +26,7 @@ class UpdateSearchSettingsRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'manual_only' => ['required', 'boolean'],
             'interval_minutes' => [
                 'bail',
                 'required',

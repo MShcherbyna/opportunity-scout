@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { AlertTriangle, CalendarDays, Inbox, Target } from '@lucide/vue';
+import { computed } from 'vue';
 import ActivityChart from '@/components/ActivityChart.vue';
 import MetricCard from '@/components/MetricCard.vue';
+import SearchStatusLine from '@/components/posts/SearchStatusLine.vue';
 import PostsTable from '@/components/posts/PostsTable.vue';
 import RunScoutButton from '@/components/RunScoutButton.vue';
 import ThreadsQuotaCard from '@/components/ThreadsQuotaCard.vue';
@@ -42,6 +44,14 @@ defineOptions({
         description: 'Overview of your Threads monitoring activity',
     },
 });
+
+const page = usePage();
+
+const connectionStatus = computed(
+    () => page.props.threadsConnection?.status ?? null,
+);
+const isConnected = computed(() => connectionStatus.value === 'connected');
+const hasConnection = computed(() => connectionStatus.value !== null);
 
 const { period, activity } = useDashboardStats(() => props.activity);
 
@@ -98,6 +108,12 @@ useSearchRunPolling(() => props.searchStatus, ['searchStatus', 'latestPosts']);
                 <p class="text-muted-foreground mt-0.5 text-xs">
                     Overview of your Threads monitoring activity
                 </p>
+                <SearchStatusLine
+                    v-if="hasConnection"
+                    class="mt-1"
+                    :search-status="searchStatus"
+                    :is-disconnected="!isConnected"
+                />
             </div>
             <div class="flex items-center gap-2">
                 <RunScoutButton :search-status="searchStatus" />
