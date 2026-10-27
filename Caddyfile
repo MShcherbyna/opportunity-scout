@@ -1,0 +1,3 @@
+oppscout.app {
+    reverse_proxy app:80
+}

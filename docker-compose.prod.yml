@@ -1,0 +1,94 @@
+# Production stack: app + queue + scheduler + mysql, fronted by Caddy (auto HTTPS).
+# Usage: docker compose -f docker-compose.prod.yml up -d
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: threads-scraper/app
+        restart: unless-stopped
+        environment:
+            APP_ENV: production
+            APP_DEBUG: 'false'
+        env_file:
+            - .env
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - app
+        depends_on:
+            mysql:
+                condition: service_healthy
+    queue:
+        image: threads-scraper/app
+        restart: unless-stopped
+        command: php artisan queue:work --tries=1 --timeout=330
+        environment:
+            APP_ENV: production
+            APP_DEBUG: 'false'
+        env_file:
+            - .env
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - app
+        depends_on:
+            mysql:
+                condition: service_healthy
+    scheduler:
+        image: threads-scraper/app
+        restart: unless-stopped
+        command: php artisan schedule:work
+        environment:
+            APP_ENV: production
+            APP_DEBUG: 'false'
+        env_file:
+            - .env
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - app
+        depends_on:
+            mysql:
+                condition: service_healthy
+    mysql:
+        image: 'mysql:8.4'
+        restart: unless-stopped
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ROOT_HOST: '%'
+            MYSQL_DATABASE: '${DB_DATABASE}'
+            MYSQL_USER: '${DB_USERNAME}'
+            MYSQL_PASSWORD: '${DB_PASSWORD}'
+        volumes:
+            - 'prod-mysql:/var/lib/mysql'
+        networks:
+            - app
+        healthcheck:
+            test: ['CMD', 'mysqladmin', 'ping', '-p${DB_PASSWORD}']
+            retries: 3
+            timeout: 5s
+    caddy:
+        image: caddy:2
+        restart: unless-stopped
+        ports:
+            - '80:80'
+            - '443:443'
+        volumes:
+            - './Caddyfile:/etc/caddy/Caddyfile'
+            - 'caddy-data:/data'
+            - 'caddy-config:/config'
+        networks:
+            - app
+        depends_on:
+            - app
+networks:
+    app:
+        driver: bridge
+volumes:
+    prod-mysql:
+        driver: local
+    caddy-data:
+        driver: local
+    caddy-config:
+        driver: local
