@@ -64,20 +64,34 @@ const prefersDark = (): boolean => {
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
 };
 
-const handleSystemThemeChange = () => {
-    const currentAppearance = getStoredAppearance();
+let lastIsAuthenticated = false;
 
-    updateTheme(currentAppearance || 'system');
+/**
+ * Applies the resolved theme for the current page. Guests always get the
+ * dark theme regardless of any previously saved preference; authenticated
+ * users get their saved/system preference.
+ */
+export function applyAppearance(isAuthenticated: boolean): void {
+    lastIsAuthenticated = isAuthenticated;
+
+    if (!isAuthenticated) {
+        updateTheme('dark');
+
+        return;
+    }
+
+    const savedAppearance = getStoredAppearance();
+    updateTheme(savedAppearance || 'system');
+}
+
+const handleSystemThemeChange = () => {
+    applyAppearance(lastIsAuthenticated);
 };
 
 export function initializeTheme(): void {
     if (typeof window === 'undefined') {
         return;
     }
-
-    // Initialize theme from saved preference or default to system...
-    const savedAppearance = getStoredAppearance();
-    updateTheme(savedAppearance || 'system');
 
     // Set up system theme change listener...
     mediaQuery()?.addEventListener('change', handleSystemThemeChange);
