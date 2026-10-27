@@ -1,5 +1,6 @@
-import { createInertiaApp } from '@inertiajs/vue3';
-import { initializeTheme } from '@/composables/useAppearance';
+import { createInertiaApp, router } from '@inertiajs/vue3';
+import type { Page, SharedPageProps } from '@inertiajs/core';
+import { applyAppearance, initializeTheme } from '@/composables/useAppearance';
 import AppLayout from '@/layouts/AppLayout.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import LegalLayout from '@/layouts/LegalLayout.vue';
@@ -30,8 +31,18 @@ void createInertiaApp({
     },
 });
 
-// This will set light / dark mode on page load...
+// This will set up the system theme change listener...
 initializeTheme();
+
+// Guests always get the dark theme; authenticated users get their saved
+// preference. Re-applied on every Inertia navigation (including the
+// initial page load) since the appearance depends on auth state.
+router.on('navigate', (event) => {
+    const page = (event as CustomEvent<{ page: Page<SharedPageProps> }>).detail
+        .page;
+
+    applyAppearance(Boolean(page.props.auth?.user));
+});
 
 // This will listen for flash toast data from the server...
 initializeFlashToast();
