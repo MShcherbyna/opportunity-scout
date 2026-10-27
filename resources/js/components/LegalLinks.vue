@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { dataDeletion, privacy } from '@/routes';
+import { dataDeletion, privacy, terms } from '@/routes';
 </script>
 
 <template>
@@ -9,6 +9,9 @@ import { dataDeletion, privacy } from '@/routes';
     >
         <Link :href="privacy()" class="hover:text-foreground">
             Privacy Policy
+        </Link>
+        <Link :href="terms()" class="hover:text-foreground">
+            Terms of Service
         </Link>
         <Link :href="dataDeletion()" class="hover:text-foreground">
             Data deletion

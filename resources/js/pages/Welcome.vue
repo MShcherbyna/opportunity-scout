@@ -13,7 +13,7 @@ import {
 } from '@lucide/vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { dataDeletion, login, privacy, register } from '@/routes';
+import { dataDeletion, login, privacy, register, terms } from '@/routes';
 
 const features = [
     {
@@ -707,6 +707,12 @@ const weeklyActivity = [
                             class="text-[13px] text-[#656d76] hover:text-[#58a6ff]"
                         >
                             Privacy Policy
+                        </Link>
+                        <Link
+                            :href="terms()"
+                            class="text-[13px] text-[#656d76] hover:text-[#58a6ff]"
+                        >
+                            Terms of Service
                         </Link>
                         <Link
                             :href="dataDeletion()"

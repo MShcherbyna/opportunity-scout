@@ -19,6 +19,7 @@ Route::inertia('/', 'Welcome')
     ->name('home');
 
 Route::inertia('privacy', 'legal/Privacy')->name('privacy');
+Route::inertia('terms', 'legal/Terms')->name('terms');
 Route::get('data-deletion', [DataDeletionController::class, 'show'])->name('data-deletion');
 
 Route::middleware(['auth', 'verified'])->group(function () {
