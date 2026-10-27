@@ -1,40 +1,138 @@
 export type PostStatus = 'relevant' | 'maybe' | 'rejected';
 
-export type Post = {
+export type ThreadsConnectionStatus = 'connected' | 'disconnected';
+
+export type ThreadsDisconnectReason =
+    | 'user'
+    | 'uninstalled'
+    | 'token_invalid'
+    | 'expired';
+
+/** Shared Inertia prop `threadsConnection`. */
+export type ThreadsConnectionSummary = {
+    status: ThreadsConnectionStatus;
+    disconnectReason: ThreadsDisconnectReason | null;
+    username: string;
+};
+
+/** Prop `connection` of the Threads settings tab. */
+export type ThreadsConnectionDetails = {
+    username: string;
+    name: string | null;
+    status: ThreadsConnectionStatus;
+    disconnectReason: ThreadsDisconnectReason | null;
+    connectedAt: string;
+    tokenExpiresAt: string | null;
+};
+
+export type SearchRunOutcome =
+    | 'completed'
+    | 'partial'
+    | 'paused_quota'
+    | 'budget_reached'
+    | 'stopped_disconnected';
+
+export type ManualRunBlockedReason =
+    | 'not_connected'
+    | 'no_keywords'
+    | 'run_in_progress'
+    | 'paused'
+    | 'budget';
+
+export type SearchStatus = {
+    runState: 'idle' | 'queued' | 'running';
+    lastRunId: number | null;
+    lastRunFinishedAt: string | null;
+    lastRunPostsStored: number | null;
+    lastRunOutcome: SearchRunOutcome | null;
+    nextRunAt: string | null;
+    pausedUntil: string | null;
+    manualRunBlockedReason: ManualRunBlockedReason | null;
+    /** Always `null` since D-29 (the manual-run cooldown was removed); kept for shape stability. */
+    manualRunAvailableAt: string | null;
+};
+
+export type ThreadsPost = {
     id: number;
-    threadsUrl: string;
-    author: string;
-    content: string;
-    status: PostStatus;
-    relevanceScore: number;
-    relevanceReasons: string[];
+    threadsPostId: string;
+    text: string | null;
+    permalink: string | null;
+    username: string;
+    keyword: string;
+    postedAt: string;
     foundAt: string;
-    publishedAt: string;
-    suggestedResponse: string;
-    /** User-driven "mark as relevant" toggle, independent of the AI-assigned status/score. */
-    manuallyMarkedRelevant: boolean;
+    /** The user-set relevance flag (AC-117); nothing in this spec sets or reads it automatically. */
+    isRelevant: boolean;
+    /** Threads reply-intent URL; null when there is no usable permalink (AC-116). */
+    replyUrl: string | null;
 };
 
-export type DashboardStats = {
-    postsCollected: { value: number; change: string };
-    relevantPosts: { value: number; change: string };
-    newToday: { value: number; change: string };
+export type PaginatedPosts = {
+    data: ThreadsPost[];
+    currentPage: number;
+    lastPage: number;
+    perPage: number;
+    total: number;
 };
 
-export type ActivityPoint = {
-    label: string;
-    collected: number;
+export type PostFilters = {
+    search: string;
+    keyword: string | null;
+};
+
+export type ScrapingKeyword = {
+    id: number;
+    keyword: string;
+    lastSearchedAt: string | null;
+    lastResultCount: number | null;
+    zeroResultsSince: string | null;
+};
+
+export type SearchSettings = {
+    intervalMinutes: 5 | 15 | 30 | 60;
+    firstSearchLookbackDays: 0 | 1 | 3;
+};
+
+export type SearchBudget = {
+    dailyBudget: number;
+    plannedDailyQueries: number;
+    runsPerDay: number;
+    keywordCap: number;
+    keywordCount: number;
+};
+
+export type ThreadsQuota = {
+    usedLast24Hours: number;
+    remaining: number;
+    dailyBudget: number;
+    threadsDailyLimit: number;
+};
+
+export type DashboardThreadsStats = {
+    postsFound: number;
+    foundLast7Days: number;
+    foundToday: number;
+    relevantPosts: number;
+};
+
+export type FoundActivityPoint = {
+    date: string;
+    found: number;
     relevant: number;
 };
 
-export type CheckFrequency = '5' | '15' | '30' | '60';
+export type DeletionRequest = {
+    confirmationCode: string;
+    status: 'pending' | 'completed';
+    requestedAt: string;
+    completedAt: string | null;
+};
 
-export type ScrapingSettings = {
-    checkFrequency: CheckFrequency;
-    postsPerRun: number;
-    keywords: string[];
-    regions: string;
-    suggestedResponseTemplate: string;
+/** Dashboard chart point; `relevant` is that day's found posts currently marked relevant (AC-105). */
+export type ActivityPoint = {
+    label: string;
+    found: number;
+    relevant: number;
 };
 
 export type AiProvider = 'openrouter' | 'openai' | 'anthropic' | 'custom';
@@ -57,14 +155,5 @@ export type TelegramSettings = {
     minimumRelevance: number;
     delivery: NotificationDelivery;
 };
-
-export type ThreadsAccount = {
-    username: string;
-    displayName: string;
-    connectedAt: string;
-    tokenExpiresAt: string;
-};
-
-export type ThreadsConnectionState = 'idle' | 'connecting' | 'disconnecting';
 
 export type SaveState = 'idle' | 'saving' | 'success' | 'error';

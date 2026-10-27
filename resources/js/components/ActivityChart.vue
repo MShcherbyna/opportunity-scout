@@ -9,7 +9,7 @@ const props = defineProps<{
 const max = computed(() =>
     Math.max(
         1,
-        ...props.data.flatMap((point) => [point.collected, point.relevant]),
+        ...props.data.flatMap((point) => [point.found, point.relevant]),
     ),
 );
 
@@ -23,7 +23,7 @@ const labelStep = computed(() => Math.ceil(props.data.length / 10));
         <div
             class="border-border flex h-[190px] items-end gap-2 border-b pt-4"
             role="img"
-            :aria-label="`Activity: ${data.map((point) => `${point.label} — ${point.collected} collected, ${point.relevant} relevant`).join('; ')}`"
+            :aria-label="`Activity: ${data.map((point) => `${point.label} — ${point.found} found, ${point.relevant} relevant`).join('; ')}`"
         >
             <div
                 v-for="point in data"
@@ -33,7 +33,7 @@ const labelStep = computed(() => Math.ceil(props.data.length / 10));
             >
                 <div
                     class="bg-muted-foreground/40 w-1/2 rounded-t-sm"
-                    :style="{ height: `${(point.collected / max) * 100}%` }"
+                    :style="{ height: `${(point.found / max) * 100}%` }"
                 />
                 <div
                     class="bg-primary/80 w-1/2 rounded-t-sm"

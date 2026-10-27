@@ -1,31 +1,41 @@
 import type { ComputedRef, Ref } from 'vue';
 import { computed, ref } from 'vue';
-import { generateActivity, mockDashboardStats } from '@/data/dashboard';
-import { mockPosts } from '@/data/posts';
-import type { ActivityPoint, DashboardStats } from '@/types';
+import type { ActivityPoint, FoundActivityPoint } from '@/types';
 
-export type ActivityPeriod = '7' | '30';
+export type ActivityPeriod = '1' | '7' | '15' | '30';
 
 export type UseDashboardStatsReturn = {
-    stats: DashboardStats;
     period: Ref<ActivityPeriod>;
     activity: ComputedRef<ActivityPoint[]>;
-    latestRelevantCount: ComputedRef<number>;
 };
 
-export function useDashboardStats(): UseDashboardStatsReturn {
+function formatDateLabel(date: string): string {
+    const [year, month, day] = date.split('-').map(Number);
+
+    return new Date(year, month - 1, day).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+    });
+}
+
+/**
+ * Maps the real found-per-day and relevant-per-day series (AC-105).
+ */
+export function useDashboardStats(
+    found: () => FoundActivityPoint[],
+): UseDashboardStatsReturn {
     const period = ref<ActivityPeriod>('7');
 
-    const activity = computed(() => generateActivity(Number(period.value)));
+    const activity = computed<ActivityPoint[]>(() => {
+        const days = Number(period.value);
+        const slice = found().slice(-days);
 
-    const latestRelevantCount = computed(
-        () => mockPosts.filter((post) => post.status === 'relevant').length,
-    );
+        return slice.map((point) => ({
+            label: formatDateLabel(point.date),
+            found: point.found,
+            relevant: point.relevant,
+        }));
+    });
 
-    return {
-        stats: mockDashboardStats,
-        period,
-        activity,
-        latestRelevantCount,
-    };
+    return { period, activity };
 }
