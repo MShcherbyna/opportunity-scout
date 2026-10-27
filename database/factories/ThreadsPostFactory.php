@@ -31,12 +31,18 @@ class ThreadsPostFactory extends Factory
             'username' => $username,
             'keyword' => fn (array $attributes) => ThreadsKeyword::query()->whereKey($attributes['threads_keyword_id'])->value('keyword') ?? fake()->word(),
             'posted_at' => now()->subHours(2),
+            'is_relevant' => false,
         ];
     }
 
     public function withoutText(): static
     {
         return $this->state(fn (): array => ['text' => null]);
+    }
+
+    public function relevant(): static
+    {
+        return $this->state(fn (): array => ['is_relevant' => true]);
     }
 
     public function foundAt(DateTimeInterface $foundAt): static
