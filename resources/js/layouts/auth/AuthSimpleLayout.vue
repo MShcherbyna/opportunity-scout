@@ -5,7 +5,7 @@ import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import LegalLinks from '@/components/LegalLinks.vue';
 import { Button } from '@/components/ui/button';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
-import { login, register } from '@/routes';
+import { home, login, register } from '@/routes';
 
 defineProps<{
     title?: string;
@@ -16,13 +16,13 @@ const { isCurrentUrl } = useCurrentUrl();
 // Inertia keeps this layout mounted across auth/* navigations (it's the
 // same resolved layout component for every auth page), so this must be a
 // computed — a plain value would only ever reflect the very first page load.
-const onSignIn = computed(() => isCurrentUrl(login()) || isCurrentUrl('/'));
+const onSignIn = computed(() => isCurrentUrl(login()));
 </script>
 
 <template>
     <div class="bg-background flex min-h-svh flex-col">
         <header class="flex items-center justify-between px-6 py-5 sm:px-10">
-            <Link :href="login()" class="flex items-center">
+            <Link :href="home()" class="flex items-center">
                 <AppLogoIcon class="size-8" />
                 <span class="sr-only">Opportunity Scout</span>
             </Link>
