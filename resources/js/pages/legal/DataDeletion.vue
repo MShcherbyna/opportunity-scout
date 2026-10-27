@@ -8,7 +8,7 @@ defineProps<{
     codeNotFound: boolean;
 }>();
 
-const contactEmail = 'maxshcherbyna247@gmail.com';
+const contactEmail = 'support@oppscout.app';
 </script>
 
 <template>
