@@ -10,12 +10,11 @@ use App\Http\Controllers\Threads\SearchRunController;
 use App\Http\Controllers\Threads\ThreadsConnectionController;
 use App\Http\Controllers\Threads\ThreadsKeywordController;
 use Illuminate\Support\Facades\Route;
-use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
-// Renders the same login page Fortify serves at /login (not a redirect to
-// it) so "/" is directly the login screen. The `guest` middleware still
-// sends an already-authenticated visitor onward, same as /login does.
-Route::get('/', [AuthenticatedSessionController::class, 'create'])
+// Marketing landing page. The `guest` middleware sends an already
+// authenticated visitor onward (same redirect Fortify's own guest routes
+// use), so only signed-out visitors see it.
+Route::inertia('/', 'Welcome')
     ->middleware(['guest:'.config('fortify.guard')])
     ->name('home');
 
