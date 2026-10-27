@@ -1,0 +1,57 @@
+name: Deploy to production
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Sync code to server
+        run: |
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/deploy_key" \
+            --exclude='.git' \
+            --exclude='vendor' \
+            --exclude='node_modules' \
+            --exclude='storage/logs/*' \
+            --exclude='storage/framework/cache/*' \
+            --exclude='storage/framework/sessions/*' \
+            --exclude='storage/framework/views/*' \
+            --exclude='.env' \
+            --exclude='.env.*' \
+            --exclude='public/build' \
+            --exclude='public/hot' \
+            --exclude='.phpunit.cache' \
+            ./ "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/"
+
+      - name: Build and release
+        run: |
+          ssh -i ~/.ssh/deploy_key "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" bash -s <<'REMOTE'
+          set -e
+          cd "${{ secrets.DEPLOY_PATH }}"
+          docker compose -f docker-compose.prod.yml build
+          docker compose -f docker-compose.prod.yml run --rm --no-deps app composer install --no-dev --optimize-autoloader
+          docker compose -f docker-compose.prod.yml run --rm --no-deps app npm ci
+          docker compose -f docker-compose.prod.yml run --rm --no-deps app npm run build
+          docker compose -f docker-compose.prod.yml up -d --remove-orphans
+          docker compose -f docker-compose.prod.yml exec -T app php artisan migrate --force
+          docker compose -f docker-compose.prod.yml exec -T app php artisan config:clear
+          docker compose -f docker-compose.prod.yml exec -T app php artisan view:clear
+          docker image prune -f
+          REMOTE
