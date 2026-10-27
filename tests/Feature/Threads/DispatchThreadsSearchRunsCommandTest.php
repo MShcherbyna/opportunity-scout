@@ -107,6 +107,22 @@ class DispatchThreadsSearchRunsCommandTest extends TestCase
     }
 
     /**
+     * A user who turned on "run only manually" never gets a scheduled run.
+     */
+    public function test_skips_users_with_manual_only_enabled(): void
+    {
+        Queue::fake([RunThreadsSearch::class]);
+        $manualOnly = $this->searchableUser(['manual_only' => true]);
+        $dueControl = $this->searchableUser();
+
+        Artisan::call('threads:dispatch-search-runs');
+
+        $this->assertSame(0, $manualOnly->threadsSearchRuns()->count());
+        $this->assertSame(1, $dueControl->threadsSearchRuns()->count());
+        Queue::assertPushed(RunThreadsSearch::class, 1);
+    }
+
+    /**
      * SPEC-01 EC-42: once the pause has ended, the next scheduled run starts normally.
      */
     public function test_queues_a_run_after_the_pause_has_ended(): void

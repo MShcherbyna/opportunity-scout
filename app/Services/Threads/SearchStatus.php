@@ -108,6 +108,7 @@ class SearchStatus
         if ($connection === null
             || $connection->status !== ThreadsConnectionStatus::Connected
             || $pausedUntil !== null
+            || $user->manual_only
             || ! $user->threadsKeywords()->exists()) {
             return null;
         }

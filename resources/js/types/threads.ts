@@ -91,6 +91,7 @@ export type ScrapingKeyword = {
 export type SearchSettings = {
     intervalMinutes: 5 | 15 | 30 | 60;
     firstSearchLookbackDays: 0 | 1 | 3;
+    manualOnly: boolean;
 };
 
 export type SearchBudget = {

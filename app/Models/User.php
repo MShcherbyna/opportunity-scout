@@ -29,11 +29,12 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property string|null $remember_token
  * @property int $search_interval_minutes
  * @property int $first_search_lookback_days
+ * @property bool $manual_only
  * @property string|null $reply_template
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password', 'search_interval_minutes', 'first_search_lookback_days', 'reply_template'])]
+#[Fillable(['name', 'email', 'password', 'search_interval_minutes', 'first_search_lookback_days', 'manual_only', 'reply_template'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements PasskeyUser
 {
@@ -53,6 +54,7 @@ class User extends Authenticatable implements PasskeyUser
             'two_factor_confirmed_at' => 'datetime',
             'search_interval_minutes' => 'integer',
             'first_search_lookback_days' => 'integer',
+            'manual_only' => 'boolean',
         ];
     }
 

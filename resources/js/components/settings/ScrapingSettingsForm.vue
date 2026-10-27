@@ -10,6 +10,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
+import { Switch } from '@/components/ui/switch';
 import { update } from '@/routes/settings/searchSettings';
 import type { SearchSettings } from '@/types';
 
@@ -18,6 +19,7 @@ const props = defineProps<{
 }>();
 
 const form = useForm({
+    manual_only: props.searchSettings.manualOnly,
     interval_minutes: String(props.searchSettings.intervalMinutes),
     first_search_lookback_days: String(
         props.searchSettings.firstSearchLookbackDays,
@@ -39,6 +41,7 @@ const lookbackOptions = [
 
 function save() {
     form.transform((data) => ({
+        manual_only: data.manual_only,
         interval_minutes: Number(data.interval_minutes),
         first_search_lookback_days: Number(data.first_search_lookback_days),
     })).patch(update.url(), { preserveScroll: true });
@@ -55,10 +58,26 @@ function save() {
             Configure how often Opportunity Scout searches Threads.
         </p>
 
+        <div
+            class="border-border mt-5 flex items-center justify-between gap-3 border-b pb-5"
+        >
+            <div class="grid gap-0.5">
+                <Label for="manual-only">Run only manually</Label>
+                <p class="text-muted-foreground text-xs">
+                    Turn off scheduled searches. Opportunity Scout only searches
+                    when you click Run.
+                </p>
+            </div>
+            <Switch id="manual-only" v-model="form.manual_only" />
+        </div>
+
         <div class="mt-5 grid gap-5 sm:grid-cols-2">
             <div class="grid gap-1.5">
                 <Label for="search-interval">Search interval</Label>
-                <Select v-model="form.interval_minutes">
+                <Select
+                    v-model="form.interval_minutes"
+                    :disabled="form.manual_only"
+                >
                     <SelectTrigger id="search-interval" class="w-full">
                         <SelectValue />
                     </SelectTrigger>
