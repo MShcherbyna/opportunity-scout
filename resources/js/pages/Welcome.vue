@@ -184,8 +184,8 @@ const weeklyActivity = [
                             class="max-w-[46ch] text-lg leading-relaxed text-[#8b949e]"
                         >
                             Opportunity Scout watches Threads for the keywords
-                            you care about — job openings, freelance gigs,
-                            service requests — and brings the relevant posts to
+                            you care about - job openings, freelance gigs,
+                            service requests - and brings the relevant posts to
                             one dashboard so you never have to scroll the feed
                             again.
                         </p>
@@ -381,7 +381,7 @@ const weeklyActivity = [
                     class="mx-auto flex max-w-6xl justify-center px-6 py-6 text-center"
                 >
                     <span class="text-[13px] text-[#656d76]">
-                        Self-hosted · runs on your own Threads Graph API
+                        Self-hosted runs on your own Threads Graph API
                         credentials
                     </span>
                 </div>
