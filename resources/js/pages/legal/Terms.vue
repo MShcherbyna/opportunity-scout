@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 
-const contactEmail = 'maxshcherbyna247@gmail.com';
+const contactEmail = 'support@oppscout.app';
 </script>
 
 <template>
