@@ -1,14 +1,12 @@
 import type { ComputedRef, Ref } from 'vue';
 import { computed, ref } from 'vue';
-import { mockRelevantPosts, mockRelevantSeries } from '@/data/dashboard';
 import type { ActivityPoint, FoundActivityPoint } from '@/types';
 
-export type ActivityPeriod = '7' | '30';
+export type ActivityPeriod = '1' | '7' | '15' | '30';
 
 export type UseDashboardStatsReturn = {
     period: Ref<ActivityPeriod>;
     activity: ComputedRef<ActivityPoint[]>;
-    relevantPosts: { value: number; change: string };
 };
 
 function formatDateLabel(date: string): string {
@@ -20,7 +18,9 @@ function formatDateLabel(date: string): string {
     });
 }
 
-/** Merges the real found-per-day series with the mock relevant series. */
+/**
+ * Maps the real found-per-day and relevant-per-day series (AC-105).
+ */
 export function useDashboardStats(
     found: () => FoundActivityPoint[],
 ): UseDashboardStatsReturn {
@@ -29,14 +29,13 @@ export function useDashboardStats(
     const activity = computed<ActivityPoint[]>(() => {
         const days = Number(period.value);
         const slice = found().slice(-days);
-        const relevant = mockRelevantSeries(slice.length);
 
-        return slice.map((point, index) => ({
+        return slice.map((point) => ({
             label: formatDateLabel(point.date),
             found: point.found,
-            relevant: relevant[index],
+            relevant: point.relevant,
         }));
     });
 
-    return { period, activity, relevantPosts: mockRelevantPosts };
+    return { period, activity };
 }

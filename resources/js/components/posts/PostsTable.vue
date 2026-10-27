@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import { SquareArrowOutUpRight } from '@lucide/vue';
 import EmptyState from '@/components/EmptyState.vue';
+import MarkRelevantButton from '@/components/MarkRelevantButton.vue';
 import TableSkeleton from '@/components/TableSkeleton.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -104,21 +105,43 @@ function excerpt(post: ThreadsPost): string {
                         </time>
                     </TableCell>
                     <TableCell class="text-right">
-                        <Button
-                            v-if="post.permalink"
-                            variant="outline"
-                            size="sm"
-                            as-child
-                        >
-                            <a
-                                :href="post.permalink"
-                                target="_blank"
-                                rel="noopener noreferrer"
+                        <div class="flex items-center justify-end gap-2">
+                            <MarkRelevantButton
+                                :post-id="post.id"
+                                :is-relevant="post.isRelevant"
+                                variant="icon"
+                            />
+                            <Button
+                                v-if="post.permalink"
+                                variant="outline"
+                                size="sm"
+                                as-child
                             >
-                                Open in Threads
-                                <SquareArrowOutUpRight class="size-3.5" />
-                            </a>
-                        </Button>
+                                <a
+                                    :href="post.permalink"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    View in Threads
+                                    <SquareArrowOutUpRight class="size-3.5" />
+                                </a>
+                            </Button>
+                            <Button
+                                v-if="post.replyUrl"
+                                variant="outline"
+                                size="sm"
+                                as-child
+                            >
+                                <a
+                                    :href="post.replyUrl"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Reply in Threads
+                                    <SquareArrowOutUpRight class="size-3.5" />
+                                </a>
+                            </Button>
+                        </div>
                     </TableCell>
                 </TableRow>
             </TableBody>

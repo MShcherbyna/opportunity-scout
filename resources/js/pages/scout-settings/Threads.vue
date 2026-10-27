@@ -11,7 +11,7 @@ defineProps<{
 defineOptions({
     layout: {
         title: 'Settings',
-        description: 'Scraping, AI filtering and integrations',
+        description: 'Keywords and Threads connection',
     },
 });
 </script>

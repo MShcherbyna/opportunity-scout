@@ -15,13 +15,13 @@ defineProps<{
 defineOptions({
     layout: {
         title: 'Settings',
-        description: 'Scraping, AI filtering and integrations',
+        description: 'Keywords and Threads connection',
     },
 });
 </script>
 
 <template>
-    <Head title="Scraping settings" />
+    <Head title="Keywords settings" />
 
     <div class="flex flex-1 flex-col gap-4 p-4 md:p-6">
         <ScoutSettingsTabs />

@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { ThumbsUp } from '@lucide/vue';
+import { router } from '@inertiajs/vue3';
+import { Heart } from '@lucide/vue';
+import { ref } from 'vue';
 import { Button } from '@/components/ui/button';
+import { update } from '@/routes/posts/relevant';
 
-const active = defineModel<boolean>('active', { required: true });
-
-withDefaults(
+const props = withDefaults(
     defineProps<{
+        postId: number;
+        isRelevant: boolean;
         variant?: 'icon' | 'full';
     }>(),
     {
@@ -13,26 +16,42 @@ withDefaults(
     },
 );
 
+const processing = ref(false);
+
 function toggle() {
-    active.value = !active.value;
+    router.patch(
+        update.url(props.postId),
+        { is_relevant: !props.isRelevant },
+        {
+            preserveScroll: true,
+            preserveState: true,
+            onStart: () => {
+                processing.value = true;
+            },
+            onFinish: () => {
+                processing.value = false;
+            },
+        },
+    );
 }
 </script>
 
 <template>
     <Button
         type="button"
-        :variant="active ? 'default' : 'outline'"
+        :variant="isRelevant ? 'default' : 'outline'"
         :size="variant === 'icon' ? 'icon-sm' : 'sm'"
-        :aria-pressed="active"
-        :title="active ? 'Marked as relevant' : 'Mark as relevant'"
+        :aria-pressed="isRelevant"
+        :disabled="processing"
+        :title="isRelevant ? 'Marked as relevant' : 'Mark as relevant'"
         @click="toggle"
     >
-        <ThumbsUp class="size-3.5" :fill="active ? 'currentColor' : 'none'" />
+        <Heart class="size-3.5" :fill="isRelevant ? 'currentColor' : 'none'" />
         <span v-if="variant === 'full'">{{
-            active ? 'Marked as relevant' : 'Mark as relevant'
+            isRelevant ? 'Marked as relevant' : 'Mark as relevant'
         }}</span>
         <span v-else class="sr-only">{{
-            active ? 'Marked as relevant' : 'Mark as relevant'
+            isRelevant ? 'Marked as relevant' : 'Mark as relevant'
         }}</span>
     </Button>
 </template>

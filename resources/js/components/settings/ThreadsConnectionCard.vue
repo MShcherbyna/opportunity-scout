@@ -147,7 +147,7 @@ function confirmDisconnect() {
             <div class="mt-5 flex flex-wrap gap-2">
                 <Button
                     v-if="isConnected"
-                    variant="outline"
+                    variant="destructive"
                     @click="confirmOpen = true"
                 >
                     Disconnect
@@ -189,6 +189,7 @@ function confirmDisconnect() {
                         Cancel
                     </Button>
                     <Button
+                        variant="destructive"
                         :disabled="isDisconnecting"
                         @click="confirmDisconnect"
                     >

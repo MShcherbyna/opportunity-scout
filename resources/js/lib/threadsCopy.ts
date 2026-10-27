@@ -55,10 +55,9 @@ export function formatRelativeTime(value: string, now = Date.now()): string {
     return relativeFormatter.format(Math.round(seconds / 60) || 0, 'minute');
 }
 
-/** M-1 to M-6: why "Run scout" is disabled. */
+/** M-1, M-2, M-3, M-5, M-6: why "Run scout" is disabled. */
 export function manualRunBlockedText(
     reason: ManualRunBlockedReason,
-    availableAt: string | null,
     pausedUntil: string | null,
 ): string {
     switch (reason) {
@@ -68,10 +67,6 @@ export function manualRunBlockedText(
             return 'Add keywords to run a search.';
         case 'run_in_progress':
             return 'A search is already running.';
-        case 'cooldown':
-            return availableAt
-                ? `You can run a search again at ${formatTime(availableAt)}.`
-                : 'You can run a search again soon.';
         case 'paused':
             return pausedUntil
                 ? `Search is paused until ${formatTime(pausedUntil)}.`

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { ArrowLeft, SquareArrowOutUpRight } from '@lucide/vue';
+import MarkRelevantButton from '@/components/MarkRelevantButton.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { formatDateTime, formatRelativeTime } from '@/lib/threadsCopy';
@@ -51,6 +52,11 @@ defineOptions({
 
             <div class="mt-4 flex flex-wrap items-center gap-3">
                 <Badge variant="secondary">{{ post.keyword }}</Badge>
+                <MarkRelevantButton
+                    :post-id="post.id"
+                    :is-relevant="post.isRelevant"
+                    variant="full"
+                />
                 <Button
                     v-if="post.permalink"
                     variant="outline"
@@ -62,7 +68,22 @@ defineOptions({
                         target="_blank"
                         rel="noopener noreferrer"
                     >
-                        Open in Threads
+                        View in Threads
+                        <SquareArrowOutUpRight class="size-3.5" />
+                    </a>
+                </Button>
+                <Button
+                    v-if="post.replyUrl"
+                    variant="outline"
+                    size="sm"
+                    as-child
+                >
+                    <a
+                        :href="post.replyUrl"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Reply in Threads
                         <SquareArrowOutUpRight class="size-3.5" />
                     </a>
                 </Button>

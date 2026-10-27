@@ -36,7 +36,6 @@ export type ManualRunBlockedReason =
     | 'not_connected'
     | 'no_keywords'
     | 'run_in_progress'
-    | 'cooldown'
     | 'paused'
     | 'budget';
 
@@ -49,6 +48,7 @@ export type SearchStatus = {
     nextRunAt: string | null;
     pausedUntil: string | null;
     manualRunBlockedReason: ManualRunBlockedReason | null;
+    /** Always `null` since D-29 (the manual-run cooldown was removed); kept for shape stability. */
     manualRunAvailableAt: string | null;
 };
 
@@ -61,6 +61,10 @@ export type ThreadsPost = {
     keyword: string;
     postedAt: string;
     foundAt: string;
+    /** The user-set relevance flag (AC-117); nothing in this spec sets or reads it automatically. */
+    isRelevant: boolean;
+    /** Threads reply-intent URL; null when there is no usable permalink (AC-116). */
+    replyUrl: string | null;
 };
 
 export type PaginatedPosts = {
@@ -108,11 +112,13 @@ export type DashboardThreadsStats = {
     postsFound: number;
     foundLast7Days: number;
     foundToday: number;
+    relevantPosts: number;
 };
 
 export type FoundActivityPoint = {
     date: string;
     found: number;
+    relevant: number;
 };
 
 export type DeletionRequest = {
@@ -122,7 +128,7 @@ export type DeletionRequest = {
     completedAt: string | null;
 };
 
-/** Mock-only dashboard values (the relevant-posts card and series stay mock, AC-105). */
+/** Dashboard chart point; `relevant` is that day's found posts currently marked relevant (AC-105). */
 export type ActivityPoint = {
     label: string;
     found: number;

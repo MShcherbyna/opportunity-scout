@@ -15,12 +15,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { useAiSettings } from '@/composables/useAiSettings';
 import type { ActivityPeriod } from '@/composables/useDashboardStats';
 import { useDashboardStats } from '@/composables/useDashboardStats';
 import { useSearchRunPolling } from '@/composables/useSearchRunPolling';
 import postsRoutes from '@/routes/posts';
-import { aiFiltering } from '@/routes/settings';
+import { scraping, threads } from '@/routes/settings';
 import type {
     DashboardThreadsStats,
     FoundActivityPoint,
@@ -44,13 +43,12 @@ defineOptions({
     },
 });
 
-const { period, activity, relevantPosts } = useDashboardStats(
-    () => props.activity,
-);
-const { settings: aiSettings } = useAiSettings();
+const { period, activity } = useDashboardStats(() => props.activity);
 
 const periodOptions: { value: ActivityPeriod; label: string }[] = [
+    { value: '1', label: 'Last 1 day' },
     { value: '7', label: 'Last 7 days' },
+    { value: '15', label: 'Last 15 days' },
     { value: '30', label: 'Last 30 days' },
 ];
 
@@ -61,16 +59,33 @@ useSearchRunPolling(() => props.searchStatus, ['searchStatus', 'latestPosts']);
     <Head title="Dashboard" />
 
     <div class="flex flex-1 flex-col gap-4 p-4 md:p-6">
-        <Alert v-if="!aiSettings.hasApiKey" variant="destructive">
+        <Alert
+            v-if="searchStatus.manualRunBlockedReason === 'not_connected'"
+            variant="destructive"
+        >
             <AlertTriangle class="size-4" />
-            <AlertTitle>AI filtering isn't configured yet</AlertTitle>
+            <AlertTitle>Threads isn't connected yet</AlertTitle>
             <AlertDescription>
                 <p>
-                    Add a provider and API key so collected posts can be scored
-                    automatically.
+                    Connect your Threads account so Opportunity Scout can search
+                    it for your keywords.
                 </p>
                 <Button as-child size="sm" variant="outline" class="mt-2">
-                    <Link :href="aiFiltering()">Configure AI filtering</Link>
+                    <Link :href="threads()">Connect Threads</Link>
+                </Button>
+            </AlertDescription>
+        </Alert>
+
+        <Alert
+            v-else-if="searchStatus.manualRunBlockedReason === 'no_keywords'"
+            variant="destructive"
+        >
+            <AlertTriangle class="size-4" />
+            <AlertTitle>No keywords yet</AlertTitle>
+            <AlertDescription>
+                <p>Add a keyword so Opportunity Scout can search Threads.</p>
+                <Button as-child size="sm" variant="outline" class="mt-2">
+                    <Link :href="scraping()">Add keywords</Link>
                 </Button>
             </AlertDescription>
         </Alert>
@@ -117,8 +132,7 @@ useSearchRunPolling(() => props.searchStatus, ['searchStatus', 'latestPosts']);
             <MetricCard
                 :icon="Target"
                 label="Relevant posts"
-                :value="relevantPosts.value.toLocaleString()"
-                :change="relevantPosts.change"
+                :value="stats.relevantPosts.toLocaleString()"
             />
             <MetricCard
                 :icon="CalendarDays"

@@ -19,7 +19,6 @@ const blockedText = computed(() =>
     props.searchStatus.manualRunBlockedReason
         ? manualRunBlockedText(
               props.searchStatus.manualRunBlockedReason,
-              props.searchStatus.manualRunAvailableAt,
               props.searchStatus.pausedUntil,
           )
         : '',

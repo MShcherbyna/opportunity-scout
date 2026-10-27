@@ -1,8 +1,17 @@
 <script setup lang="ts">
 import { Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { TriangleAlert, X } from '@lucide/vue';
+import { Info, TriangleAlert, X } from '@lucide/vue';
 import { computed, nextTick, ref } from 'vue';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -25,6 +34,14 @@ const props = defineProps<{
 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
+const budgetDialogOpen = ref(false);
+
+const searchBudgetParagraphs = [
+    'Opportunity Scout plans with 2,000 Threads searches per 24 hours. Threads allows 2,200 for your account, shared with other apps you use with Threads, so we keep some headroom.',
+    'Each run searches every keyword once, so one run uses as many searches as you have keywords. Runs per day = 1,440 minutes ÷ your interval.',
+    'Keyword limit = the smaller of 20 and 2,000 ÷ runs per day: every 5 minutes (288 runs) → 6 keywords; every 15 minutes (96 runs) → 20; every 30 minutes (48 runs) → 20; every hour (24 runs) → 20.',
+];
+
 const page = usePage();
 
 const isConnected = computed(
@@ -35,20 +52,71 @@ const atCap = computed(
     () => props.searchBudget.keywordCount >= props.searchBudget.keywordCap,
 );
 
-const addForm = useForm({ keyword: '' });
+const newKeywordsInput = ref('');
+const savingKeywords = ref(false);
+const keywordErrors = ref<string[]>([]);
 const renameForm = useForm({ keyword: '' });
 const editingId = ref<number | null>(null);
 const renameInputs = ref<HTMLInputElement[]>([]);
 
-function addKeyword() {
-    if (atCap.value || addForm.processing) {
+/** Splits "php, laravel, vue" into trimmed, deduplicated candidates. */
+function splitKeywordCandidates(input: string): string[] {
+    return Array.from(
+        new Set(
+            input
+                .split(',')
+                .map((candidate) => candidate.trim())
+                .filter((candidate) => candidate.length > 0),
+        ),
+    );
+}
+
+function postKeyword(keyword: string): Promise<void> {
+    return new Promise((resolve) => {
+        router.post(
+            store.url(),
+            { keyword },
+            {
+                preserveScroll: true,
+                preserveState: true,
+                onError: (errors) => {
+                    if (errors.keyword) {
+                        keywordErrors.value.push(
+                            `${keyword}: ${errors.keyword}`,
+                        );
+                    }
+                },
+                onFinish: () => resolve(),
+            },
+        );
+    });
+}
+
+async function saveKeywords() {
+    if (savingKeywords.value) {
         return;
     }
 
-    addForm.post(store.url(), {
-        preserveScroll: true,
-        onSuccess: () => addForm.reset(),
-    });
+    const candidates = splitKeywordCandidates(newKeywordsInput.value);
+
+    if (candidates.length === 0) {
+        return;
+    }
+
+    savingKeywords.value = true;
+    keywordErrors.value = [];
+
+    for (const candidate of candidates) {
+        if (atCap.value) {
+            keywordErrors.value.push(`${candidate}: keyword limit reached.`);
+            continue;
+        }
+
+        await postKeyword(candidate);
+    }
+
+    savingKeywords.value = false;
+    newKeywordsInput.value = '';
 }
 
 function startRename(keyword: ScrapingKeyword) {
@@ -113,7 +181,18 @@ function searchedText(keyword: ScrapingKeyword): string {
 <template>
     <TooltipProvider>
         <div class="border-border bg-card max-w-3xl rounded-lg border p-5">
-            <h2 class="text-sm font-semibold">Keywords</h2>
+            <div class="flex items-center justify-between">
+                <h2 class="text-sm font-semibold">Keywords</h2>
+                <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    @click="budgetDialogOpen = true"
+                >
+                    <Info class="size-3.5" />
+                    How does this work?
+                </Button>
+            </div>
             <p class="text-muted-foreground text-xs">
                 Opportunity Scout searches Threads for each keyword.
             </p>
@@ -198,22 +277,40 @@ function searchedText(keyword: ScrapingKeyword): string {
             </ul>
 
             <div class="mt-4 grid gap-1.5">
-                <Label for="new-keyword">Add keyword</Label>
-                <Input
-                    id="new-keyword"
-                    v-model="addForm.keyword"
-                    type="text"
-                    maxlength="100"
-                    placeholder="php, laravel, vue…"
-                    :disabled="atCap"
-                    :aria-invalid="!!addForm.errors.keyword"
-                    @keydown.enter.prevent="addKeyword"
-                />
+                <Label for="new-keyword">Add keywords</Label>
+                <div class="flex gap-2">
+                    <Input
+                        id="new-keyword"
+                        v-model="newKeywordsInput"
+                        type="text"
+                        placeholder="php, laravel, vue…"
+                        :disabled="atCap || savingKeywords"
+                        :aria-invalid="keywordErrors.length > 0"
+                        @keydown.enter.prevent="saveKeywords"
+                    />
+                    <Button
+                        type="button"
+                        size="sm"
+                        :disabled="
+                            atCap ||
+                            savingKeywords ||
+                            newKeywordsInput.trim().length === 0
+                        "
+                        @click="saveKeywords"
+                    >
+                        Save
+                    </Button>
+                </div>
                 <p
-                    v-if="addForm.errors.keyword"
+                    v-for="error in keywordErrors"
+                    :key="error"
                     class="text-destructive text-xs"
                 >
-                    {{ addForm.errors.keyword }}
+                    {{ error }}
+                </p>
+                <p class="text-muted-foreground text-xs">
+                    Separate multiple keywords with commas — each one is saved
+                    as its own keyword.
                 </p>
                 <p v-if="atCap" class="text-muted-foreground text-xs">
                     Keyword limit reached ({{
@@ -234,5 +331,25 @@ function searchedText(keyword: ScrapingKeyword): string {
                 </p>
             </div>
         </div>
+
+        <Dialog v-model:open="budgetDialogOpen">
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Search budget</DialogTitle>
+                </DialogHeader>
+                <p
+                    v-for="paragraph in searchBudgetParagraphs"
+                    :key="paragraph"
+                    class="text-muted-foreground text-sm"
+                >
+                    {{ paragraph }}
+                </p>
+                <DialogFooter>
+                    <DialogClose as-child>
+                        <Button variant="outline">Close</Button>
+                    </DialogClose>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     </TooltipProvider>
 </template>
