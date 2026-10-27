@@ -47,7 +47,13 @@ class SettingsUrlSplitTest extends TestCase
         $this->actingAs(User::factory()->create())
             ->get('/settings/scraping')
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->component('scout-settings/Scraping'));
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('scout-settings/Scraping')
+                ->has('keywords')
+                ->has('searchSettings')
+                ->has('searchBudget')
+                ->has('ownPostsOnly')
+            );
     }
 
     public function test_old_account_settings_url_returns_404(): void

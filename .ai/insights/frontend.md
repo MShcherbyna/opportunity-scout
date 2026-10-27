@@ -53,6 +53,15 @@ dev`/`build`.
 Evidence: `resources/js/routes/settings/index.ts`, `routes/web.php`
 (settings.scraping/aiFiltering/integrations routes)
 
+### 2026-10-23
+
+The Reka UI `Select` (used by the shadcn `Select`) can't take an empty-string
+item value, so an "All keywords" option needs a sentinel value mapped to
+`null` before it goes into the query string. The shadcn `Tooltip` also needs a
+`TooltipProvider` ancestor; `KeywordsEditor` renders its own.
+Evidence: `resources/js/components/posts/PostsFilters.vue`,
+`resources/js/components/settings/KeywordsEditor.vue`
+
 ## Recurring Errors & Fixes
 
 ### 2026-09-18
