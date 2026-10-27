@@ -8,7 +8,7 @@ defineProps<{
     codeNotFound: boolean;
 }>();
 
-const contactEmail = 'privacy@your-domain.com';
+const contactEmail = 'maxshcherbyna247@gmail.com';
 </script>
 
 <template>
