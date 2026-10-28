@@ -44,9 +44,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::prefix('settings')->name('settings.')->group(function () {
-        Route::redirect('/', '/settings/scraping');
+        Route::redirect('/', '/settings/keywords');
 
-        Route::get('scraping', [ScrapingSettingsController::class, 'show'])->name('scraping');
+        Route::get('keywords', [ScrapingSettingsController::class, 'show'])->name('keywords');
         Route::patch('search-settings', [ScrapingSettingsController::class, 'update'])->name('searchSettings.update');
         Route::get('reply-template', [ReplyTemplateController::class, 'show'])->name('replyTemplate.show');
         Route::patch('reply-template', [ReplyTemplateController::class, 'update'])->name('replyTemplate.update');

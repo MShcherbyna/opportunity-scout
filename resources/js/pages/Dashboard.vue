@@ -21,7 +21,7 @@ import type { ActivityPeriod } from '@/composables/useDashboardStats';
 import { useDashboardStats } from '@/composables/useDashboardStats';
 import { useSearchRunPolling } from '@/composables/useSearchRunPolling';
 import postsRoutes from '@/routes/posts';
-import { scraping, threads } from '@/routes/settings';
+import { keywords, threads } from '@/routes/settings';
 import type {
     DashboardThreadsStats,
     FoundActivityPoint,
@@ -95,7 +95,7 @@ useSearchRunPolling(() => props.searchStatus, ['searchStatus', 'latestPosts']);
             <AlertDescription>
                 <p>Add a keyword so Opportunity Scout can search Threads.</p>
                 <Button as-child size="sm" variant="outline" class="mt-2">
-                    <Link :href="scraping()">Add keywords</Link>
+                    <Link :href="keywords()">Add keywords</Link>
                 </Button>
             </AlertDescription>
         </Alert>

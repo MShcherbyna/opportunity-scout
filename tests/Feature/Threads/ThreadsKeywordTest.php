@@ -39,10 +39,10 @@ class ThreadsKeywordTest extends TestCase
         $otherUser = User::factory()->create();
 
         $response = $this->actingAs($user)
-            ->from(route('settings.scraping'))
+            ->from(route('settings.keywords'))
             ->post(route('settings.keywords.store'), ['keyword' => $input]);
 
-        $response->assertRedirect(route('settings.scraping'));
+        $response->assertRedirect(route('settings.keywords'));
         $response->assertInertiaFlash('toast.type', 'success');
         $response->assertInertiaFlash('toast.message', 'Keyword added.');
         $this->assertDatabaseHas('threads_keywords', ['user_id' => $user->id, 'keyword' => $expected]);
@@ -73,10 +73,10 @@ class ThreadsKeywordTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)
-            ->from(route('settings.scraping'))
+            ->from(route('settings.keywords'))
             ->post(route('settings.keywords.store'), ['keyword' => $keyword]);
 
-        $response->assertRedirect(route('settings.scraping'));
+        $response->assertRedirect(route('settings.keywords'));
         $response->assertSessionHasErrors('keyword');
         $this->assertSame(0, $user->threadsKeywords()->count());
     }
@@ -102,7 +102,7 @@ class ThreadsKeywordTest extends TestCase
         $this->makeKeyword($user, 'laravel');
 
         $response = $this->actingAs($user)
-            ->from(route('settings.scraping'))
+            ->from(route('settings.keywords'))
             ->post(route('settings.keywords.store'), ['keyword' => '  LARAVEL ']);
 
         $response->assertSessionHasErrors(['keyword' => 'This keyword already exists.']);
@@ -146,7 +146,7 @@ class ThreadsKeywordTest extends TestCase
         ThreadsKeyword::factory()->count($cap)->for($user)->create();
 
         $response = $this->actingAs($user)
-            ->from(route('settings.scraping'))
+            ->from(route('settings.keywords'))
             ->post(route('settings.keywords.store'), ['keyword' => 'one too many']);
 
         $response->assertSessionHasErrors([
@@ -223,10 +223,10 @@ class ThreadsKeywordTest extends TestCase
         ]);
 
         $response = $this->actingAs($user)
-            ->from(route('settings.scraping'))
+            ->from(route('settings.keywords'))
             ->patch(route('settings.keywords.update', $keyword), ['keyword' => '  New   NAME ']);
 
-        $response->assertRedirect(route('settings.scraping'));
+        $response->assertRedirect(route('settings.keywords'));
         $response->assertInertiaFlash('toast.message', 'Keyword updated.');
         $stored = $keyword->fresh();
         $this->assertSame('new name', $stored->keyword);
@@ -245,10 +245,10 @@ class ThreadsKeywordTest extends TestCase
         $keyword = $this->makeKeyword($user, 'alpha');
 
         $response = $this->actingAs($user)
-            ->from(route('settings.scraping'))
+            ->from(route('settings.keywords'))
             ->patch(route('settings.keywords.update', $keyword), ['keyword' => 'Alpha']);
 
-        $response->assertRedirect(route('settings.scraping'));
+        $response->assertRedirect(route('settings.keywords'));
         $response->assertSessionHasNoErrors();
         $response->assertInertiaFlash('toast.message', 'Keyword updated.');
         $this->assertSame('alpha', $keyword->fresh()->keyword);
@@ -264,7 +264,7 @@ class ThreadsKeywordTest extends TestCase
         $this->makeKeyword($user, 'beta');
 
         $response = $this->actingAs($user)
-            ->from(route('settings.scraping'))
+            ->from(route('settings.keywords'))
             ->patch(route('settings.keywords.update', $keyword), ['keyword' => ' BETA ']);
 
         $response->assertSessionHasErrors(['keyword' => 'This keyword already exists.']);
@@ -281,7 +281,7 @@ class ThreadsKeywordTest extends TestCase
         $keyword = $this->makeKeyword($user, 'alpha');
 
         $this->actingAs($user)
-            ->from(route('settings.scraping'))
+            ->from(route('settings.keywords'))
             ->patch(route('settings.keywords.update', $keyword), ['keyword' => $value])
             ->assertSessionHasErrors('keyword');
 
@@ -310,10 +310,10 @@ class ThreadsKeywordTest extends TestCase
         $post = $this->makePost($user, ['threads_keyword_id' => $keyword->id, 'keyword' => 'laravel']);
 
         $response = $this->actingAs($user)
-            ->from(route('settings.scraping'))
+            ->from(route('settings.keywords'))
             ->delete(route('settings.keywords.destroy', $keyword));
 
-        $response->assertRedirect(route('settings.scraping'));
+        $response->assertRedirect(route('settings.keywords'));
         $response->assertInertiaFlash('toast.message', 'Keyword removed.');
         $this->assertModelMissing($keyword);
         $this->assertModelExists($post);
@@ -393,10 +393,10 @@ class ThreadsKeywordTest extends TestCase
         });
 
         $response = $this->actingAs($user)
-            ->from(route('settings.scraping'))
+            ->from(route('settings.keywords'))
             ->post(route('settings.keywords.store'), ['keyword' => 'laravel']);
 
-        $response->assertRedirect(route('settings.scraping'));
+        $response->assertRedirect(route('settings.keywords'));
         $response->assertSessionHasErrors(['keyword' => 'This keyword already exists.']);
         $this->assertSame(0, $user->threadsKeywords()->count());
     }
@@ -413,10 +413,10 @@ class ThreadsKeywordTest extends TestCase
         });
 
         $response = $this->actingAs($user)
-            ->from(route('settings.scraping'))
+            ->from(route('settings.keywords'))
             ->patch(route('settings.keywords.update', $keyword), ['keyword' => 'beta']);
 
-        $response->assertRedirect(route('settings.scraping'));
+        $response->assertRedirect(route('settings.keywords'));
         $response->assertSessionHasErrors(['keyword' => 'This keyword already exists.']);
         $this->assertSame('alpha', $keyword->fresh()->keyword);
     }

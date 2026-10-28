@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import posts from '@/routes/posts';
-import { scraping } from '@/routes/settings';
+import { keywords } from '@/routes/settings';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -30,7 +30,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Settings',
-        href: scraping(),
+        href: keywords(),
         icon: Settings,
         activeMatch: '/settings',
     },

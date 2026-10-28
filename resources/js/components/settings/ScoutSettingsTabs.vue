@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
-import { scraping, threads } from '@/routes/settings';
+import { keywords, threads } from '@/routes/settings';
 import { show as replyTemplate } from '@/routes/settings/replyTemplate';
 import type { NavItem } from '@/types';
 
 const tabs: NavItem[] = [
-    { title: 'Keywords', href: scraping() },
+    { title: 'Keywords', href: keywords() },
     { title: 'Threads', href: threads() },
     { title: 'Reply template', href: replyTemplate() },
 ];
