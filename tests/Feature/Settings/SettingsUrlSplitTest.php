@@ -39,13 +39,13 @@ class SettingsUrlSplitTest extends TestCase
     {
         $this->actingAs(User::factory()->create())
             ->get('/settings')
-            ->assertRedirect('/settings/scraping');
+            ->assertRedirect('/settings/keywords');
     }
 
     public function test_scraping_settings_page_renders_under_settings_url(): void
     {
         $this->actingAs(User::factory()->create())
-            ->get('/settings/scraping')
+            ->get('/settings/keywords')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('scout-settings/Scraping')

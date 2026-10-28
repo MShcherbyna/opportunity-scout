@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { useSearchRunPolling } from '@/composables/useSearchRunPolling';
 import { formatDateTime } from '@/lib/threadsCopy';
 import postsRoutes from '@/routes/posts';
-import { scraping } from '@/routes/settings';
+import { keywords } from '@/routes/settings';
 import { connect } from '@/routes/threads';
 import type { PaginatedPosts, PostFilters, SearchStatus } from '@/types';
 
@@ -175,7 +175,7 @@ useSearchRunPolling(() => props.searchStatus, ['searchStatus', 'posts']);
                     >
                         <template #action>
                             <Button as-child>
-                                <Link :href="scraping()">Add keywords</Link>
+                                <Link :href="keywords()">Add keywords</Link>
                             </Button>
                         </template>
                     </EmptyState>

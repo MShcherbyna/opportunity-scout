@@ -20,14 +20,14 @@ class SearchSettingsTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)
-            ->from(route('settings.scraping'))
+            ->from(route('settings.keywords'))
             ->patch(route('settings.searchSettings.update'), [
                 'manual_only' => false,
                 'interval_minutes' => 30,
                 'first_search_lookback_days' => 3,
             ]);
 
-        $response->assertRedirect(route('settings.scraping'));
+        $response->assertRedirect(route('settings.keywords'));
         $response->assertInertiaFlash('toast.type', 'success');
         $response->assertInertiaFlash('toast.message', 'Search settings saved.');
         $stored = $user->fresh();

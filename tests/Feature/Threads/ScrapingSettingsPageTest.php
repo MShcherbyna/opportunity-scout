@@ -27,7 +27,7 @@ class ScrapingSettingsPageTest extends TestCase
         $silent = ThreadsKeyword::factory()->for($user)->zeroResultsSince(Carbon::parse('2026-10-10 00:00:00'))->create(['keyword' => 'remote']);
         ThreadsKeyword::factory()->create(['keyword' => 'someone elses']);
 
-        $response = $this->actingAs($user)->get(route('settings.scraping'));
+        $response = $this->actingAs($user)->get(route('settings.keywords'));
 
         $keywords = collect($response->requiredProp('keywords'))->keyBy('id');
         $this->assertCount(3, $keywords);
@@ -53,7 +53,7 @@ class ScrapingSettingsPageTest extends TestCase
         $user = User::factory()->create(['search_interval_minutes' => 30, 'first_search_lookback_days' => 3, 'manual_only' => true]);
 
         $this->actingAs($user)
-            ->get(route('settings.scraping'))
+            ->get(route('settings.keywords'))
             ->assertInertia(fn (Assert $page) => $page
                 ->component('scout-settings/Scraping')
                 ->where('searchSettings.intervalMinutes', 30)
@@ -85,7 +85,7 @@ class ScrapingSettingsPageTest extends TestCase
         ThreadsKeyword::factory()->count($keywordCount)->for($user)->create();
 
         $this->actingAs($user)
-            ->get(route('settings.scraping'))
+            ->get(route('settings.keywords'))
             ->assertInertia(fn (Assert $page) => $page
                 ->where('searchBudget.dailyBudget', 2000)
                 ->where('searchBudget.plannedDailyQueries', $planned)
@@ -104,7 +104,7 @@ class ScrapingSettingsPageTest extends TestCase
         config(['services.threads.own_posts_only' => $enabled]);
 
         $this->actingAs(User::factory()->create())
-            ->get(route('settings.scraping'))
+            ->get(route('settings.keywords'))
             ->assertInertia(fn (Assert $page) => $page->where('ownPostsOnly', $enabled));
     }
 
@@ -127,7 +127,7 @@ class ScrapingSettingsPageTest extends TestCase
         $user = User::factory()->create(['reply_template' => 'Thanks for reaching out, I\'d love to help!']);
 
         $this->actingAs($user)
-            ->get(route('settings.scraping'))
+            ->get(route('settings.keywords'))
             ->assertInertia(fn (Assert $page) => $page
                 ->component('scout-settings/Scraping')
                 ->missing('replyTemplate')
